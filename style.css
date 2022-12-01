@@ -1,0 +1,39 @@
+@font-face {
+    font-family: "Ubuntu-Medium";
+    src: url(fonts/Ubuntu-Medium.ttf);
+}
+
+body {
+    background-color: rgb(28, 27, 31);
+    color: white;
+    font-family: 'Ubuntu-Medium', sans-serif;
+    padding: 30px;
+}
+
+#total-marks {
+    font-size: 250%;
+    line-height: 0;
+}
+
+#details {
+    font-size: 120%;
+    line-height: 0.75;
+}
+
+#question {
+    font-size: 250%;
+    line-height: 0;
+    padding-top: 2em;
+}
+
+#answer {
+    background-color: rgb(44, 43, 47);
+    color: white;
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 200%;
+    padding: 12px;
+    max-width: 35px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    outline: none;
+}
