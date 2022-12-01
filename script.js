@@ -1,33 +1,70 @@
 // Variables
 var marks = 0;
-var question_value = 1;
-var arithmetic = document.getElementById('arithmetic');
+var marksDisplayed = 0; 
+var questionValue = 30;
 
-// Add Marks
-function addMarks() {
-    marks += question_value;
+// Game Loop                                                                    source: https://spicyyoghurt.com/tutorials/html5-javascript-game-development/create-a-proper-game-loop-with-requestanimationframe
+window.onload = init;
+function init() {
+    // Request the game loop to be run
+    window.requestAnimationFrame(gameLoop)
+}
 
-    document.getElementById('count').innerHTML = marks;
+function gameLoop(timeStamp) {
+    
+    // Lerp the displayed marks
+    if (marksDisplayed < marks) {
+        marksDisplayed = Math.ceil(lerp(marksDisplayed, marks, 0.3));
+        document.getElementById('marks').innerHTML = marksDisplayed;
 
-    // Add the question value to the marks
-    // Set the inner html to marks
+        // Debugging
+        console.log(marksDisplayed);
+    } 
+
+    // Request again
+    window.requestAnimationFrame(gameLoop);
 }
 
 // Event Listener
 document.addEventListener("keydown", (event) => {
     // If the user submits the answer
     if (event.key === 'Enter') {
-
         // Get values
         var value1 = parseInt(document.getElementById('value1').innerHTML);
         var value2 = parseInt(document.getElementById('value2').innerHTML);
-        var answer = document.getElementById('answer').value; 
+        var answer = document.getElementById('answer').value;
         
-        // Check Arithmetic
+        // Check if the input was correct
         if (value1 + value2 == answer) { 
-            // Add marks
-            addMarks();
+            // Randomise values
+            value1 = getRandomInt(1, 10);                                 
+            value2 = getRandomInt(1, 10);                                  
+            document.getElementById('value1').innerHTML = value1; 
+            document.getElementById('value2').innerHTML = value2;
+
+            marks += questionValue;                                             // Add Marks
+            document.getElementById('answer').value = "";                       // Clear the input
+            document.getElementById('correct').play();                          // Play sound effect
+
+            // Debugging
+            console.log('Correct, Marks:' + marks);
+        } else {
+            // Debugging
+            console.log('Wrong.');
         }
-        
     }
 });
+
+
+// Random Range (Integer)
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+
+    // Return a random value between the min and max
+    // *Both min and max are inclusive
+}
+
+// Linear Interpolation 
+function lerp(start, stop, magnitude) {
+    return start + magnitude * (stop - start); 
+}
