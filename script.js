@@ -1,9 +1,18 @@
-// Variables
+/*======================================================================================================================
+INSTANCE VARIABLES
+======================================================================================================================*/
+
 var marks = 0;
 var marksDisplayed = 0; 
 var questionValue = 30;
 
-// Game Loop                                                                    source: https://spicyyoghurt.com/tutorials/html5-javascript-game-development/create-a-proper-game-loop-with-requestanimationframe
+
+
+
+/*======================================================================================================================
+GAME LOOP
+========================================================================================================================*/
+
 window.onload = init;
 function init() {
     // Request the game loop to be run
@@ -15,7 +24,7 @@ function gameLoop(timeStamp) {
     // Lerp the displayed marks
     if (marksDisplayed < marks) {
         marksDisplayed = Math.ceil(lerp(marksDisplayed, marks, 0.3));
-        document.getElementById('marks').innerHTML = marksDisplayed;
+        elemid('marks').innerHTML = marksDisplayed;
 
         // Debugging
         console.log(marksDisplayed);
@@ -25,29 +34,40 @@ function gameLoop(timeStamp) {
     window.requestAnimationFrame(gameLoop);
 }
 
-// Event Listener
+
+
+
+/*======================================================================================================================
+SUBMISSION OF ANSWER
+======================================================================================================================*/
+
 document.addEventListener("keydown", (event) => {
     // If the user submits the answer
     if (event.key === 'Enter') {
         // Get values
-        var value1 = parseInt(document.getElementById('value1').innerHTML);
-        var value2 = parseInt(document.getElementById('value2').innerHTML);
-        var answer = document.getElementById('answer').value;
+        var value1 = parseInt(elemid('value1').innerHTML);
+        var value2 = parseInt(elemid('value2').innerHTML);
+        var answer = elemid('answer').value;
         
         // Check if the input was correct
         if (value1 + value2 == answer) { 
             // Randomise values
             value1 = getRandomInt(1, 10);                                 
             value2 = getRandomInt(1, 10);                                  
-            document.getElementById('value1').innerHTML = value1; 
-            document.getElementById('value2').innerHTML = value2;
+            elemid('value1').innerHTML = value1; 
+            elemid('value2').innerHTML = value2;
+            
+            // Add Marks
+            marks += questionValue;    
 
-            marks += questionValue;                                             // Add Marks
-            document.getElementById('answer').value = "";                       // Clear the input
-            document.getElementById('correct').play();                          // Play sound effect
+            // Clear the input                                 
+            elemid('answer').value = "";    
 
+            // Play sound effect                           
+            elemid('correct').play();                                           
+            
             // Debugging
-            console.log('Correct, Marks:' + marks);
+            console.log(`Correct, Marks: ${marks}`);
         } else {
             // Debugging
             console.log('Wrong.');
@@ -55,6 +75,17 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
+
+
+
+/*======================================================================================================================
+HELPER FUNCTIONS
+======================================================================================================================*/
+
+// GetElementId Helper
+function elemid(id) { 
+    return document.getElementById(id); 
+}
 
 // Random Range (Integer)
 function getRandomInt(min, max) {
@@ -68,3 +99,12 @@ function getRandomInt(min, max) {
 function lerp(start, stop, magnitude) {
     return start + magnitude * (stop - start); 
 }
+
+
+
+
+/*======================================================================================================================
+REFERENCES:
+
+- Game loop concept is adapted from: https://spicyyoghurt.com/tutorials/html5-javascript-game-development/create-a-proper-game-loop-with-requestanimationframe
+======================================================================================================================*/
