@@ -2,9 +2,22 @@
 INSTANCE VARIABLES
 ======================================================================================================================*/
 
+// Marks
 var marks = 0;
-var marksDisplayed = 0; 
-var questionValue = 30;
+var marks_displayed = 0; 
+
+// Marks per second
+var mps = 0;
+var mps_counter = 0;
+
+// Question
+var question_value = 1;
+var bottom_value = 1;
+var top_value = 10;
+
+// Debugging
+var solved = 0;
+var paused = false;
 
 
 
@@ -22,16 +35,25 @@ function init() {
 function gameLoop(timeStamp) {
     
     // Lerp the displayed marks
-    if (marksDisplayed < marks) {
-        marksDisplayed = Math.ceil(lerp(marksDisplayed, marks, 0.3));
-        elemid('marks').innerHTML = marksDisplayed;
+    if (marks_displayed < marks) {
+        marks_displayed = Math.ceil(lerp(marks_displayed, marks, 0.3));
+        elemid('marks').innerHTML = marks_displayed;
 
         // Debugging
-        console.log(marksDisplayed);
+        console.log(marks_displayed
+        );
     } 
 
+    // Marks per second
+    mps_counter++;
+    if (mps_counter >= 60) {
+        marks += mps;
+
+        mps_counter = 0;
+    }
+
     // Request again
-    window.requestAnimationFrame(gameLoop);
+    repeating_request = window.requestAnimationFrame(gameLoop);
 }
 
 
@@ -52,25 +74,55 @@ document.addEventListener("keydown", (event) => {
         // Check if the input was correct
         if (value1 + value2 == answer) { 
             // Randomise values
-            value1 = getRandomInt(1, 10);                                 
-            value2 = getRandomInt(1, 10);                                  
+            value1 = getRandomInt(bottom_value, top_value);  
+            value2 = getRandomInt(bottom_value, top_value);
             elemid('value1').innerHTML = value1; 
             elemid('value2').innerHTML = value2;
             
             // Add Marks
-            marks += questionValue;    
+            marks += question_value;    
 
             // Clear the input                                 
             elemid('answer').value = "";    
 
             // Play sound effect                           
-            elemid('correct').play();                                           
+            //elemid('correct').play();     
+            
+            // Increment 'solved' count
+            solved++;
             
             // Debugging
             console.log(`Correct, Marks: ${marks}`);
         } else {
             // Debugging
             console.log('Wrong.');
+        }
+    }
+});
+
+
+
+
+/*======================================================================================================================
+PAUSING GAME
+========================================================================================================================*/
+
+document.addEventListener("keyup", (event) => {
+    if (event.key === 'Escape') {
+        if (paused) {
+            // Un-paused
+            paused = false;
+            
+            // Restart the animation frame
+            window.requestAnimationFrame(gameLoop);
+            console.log("Un-Pause");
+        } else {
+            // Pause
+            paused = true;
+            
+            // Cancel the animation frame
+            cancelAnimationFrame(repeating_request);
+            console.log("Pause");
         }
     }
 });
