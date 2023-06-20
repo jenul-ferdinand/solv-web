@@ -19,32 +19,43 @@ var top_value = 10;
 var solved = 0;
 var paused = false;
 
-
+// Upgrades
+var upgrades = [
+    {name: 'Testing', cost: 2},
+    {name: 'Lorem', cost: 3},
+    {name: 'Ipsum', cost: 4}
+]
 
 
 /*======================================================================================================================
 GAME LOOP
 ========================================================================================================================*/
 
-window.onload = init;
+//window.onload = init;
+
+window.addEventListener('load', init); 
+
 function init() {
-    // Request the game loop to be run
-    window.requestAnimationFrame(gameLoop)
+
+    // * Run game loop before next repaint
+    window.requestAnimationFrame(gameLoop);
+
 }
 
 function gameLoop(timeStamp) {
+
+    renderUpgrades();
     
-    // Lerp the displayed marks
+    // * Displayed marks interpolation
     if (marks_displayed < marks) {
         marks_displayed = Math.ceil(lerp(marks_displayed, marks, 0.3));
         elemid('marks').innerHTML = marks_displayed;
 
         // Debugging
-        console.log(marks_displayed
-        );
+        console.log(marks_displayed);
     } 
 
-    // Marks per second
+    // * Marks per second
     mps_counter++;
     if (mps_counter >= 60) {
         marks += mps;
@@ -52,8 +63,56 @@ function gameLoop(timeStamp) {
         mps_counter = 0;
     }
 
-    // Request again
+    // * Request again
     repeating_request = window.requestAnimationFrame(gameLoop);
+}
+
+
+
+
+/*======================================================================================================================
+RENDERING UPGRADES
+======================================================================================================================*/
+
+function renderUpgrades() {
+    // Store the upgrades container
+    let upgrade_container = document.getElementById("upgrades");
+
+    // Loop through each upgrade of the upgrades list
+    for (let upgrade of upgrades) {
+        
+        let upgrade_id = `${upgrade.name}-${upgrade.cost}-${upgrade.value}`;
+        let upgrade_element = elemid(upgrade_id); 
+        
+        // When we have sufficient funds and upgrade doesn't exist
+        if (marks >= upgrade.cost && !upgrade_element) {
+
+            // Division for the upgrade
+            let div = document.createElement("div");
+
+            // Set the id
+            div.id = upgrade_id;
+
+            // Set the innerHTML
+            div.innerHTML = `Name: ${upgrade.name}<br>Cost: ${upgrade.cost}<br>Value: ${upgrade.value}`; 
+
+            // Append the upgrade to the "upgrades" container
+            upgrade_container.appendChild(div);
+            
+            // ? Debugging
+            console.log(`Create Upgrade: ${upgrade.name}`);
+        
+        } 
+        // Insufficient funds condition and upgrade exists
+        else if (marks < upgrade.cost && upgrade_element) {
+            
+            // Remove the upgrade
+            upgrade_container.removeChild(upgrade_element);
+            
+            // ? Debugging
+            console.log(`Remove Upgrade: ${upgrade.name}`); 
+        }
+    }
 }
 
 
@@ -121,7 +180,7 @@ document.addEventListener("keyup", (event) => {
             paused = true;
             
             // Cancel the animation frame
-            cancelAnimationFrame(repeating_request);
+            window.cancelAnimationFrame(repeating_request);
             console.log("Pause");
         }
     }
@@ -144,7 +203,7 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 
     // Return a random value between the min and max
-    // *Both min and max are inclusive
+    // Both min and max are inclusive
 }
 
 // Linear Interpolation 

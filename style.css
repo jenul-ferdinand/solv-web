@@ -8,6 +8,23 @@ body {
     color: white;
     font-family: 'Ubuntu-Medium', sans-serif;
     padding: 30px;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+#game {
+    flex: 70%;
+}
+
+#upgrades {
+    flex: 30%;
+    padding: 15px; 
+    background-color: rgb(44, 43, 47);
+    color: white;
+    border-radius: 10px; 
+    border: 2px solid transparent;
+    overflow: auto;
 }
 
 #total-marks {
