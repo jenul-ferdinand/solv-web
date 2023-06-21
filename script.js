@@ -93,6 +93,8 @@ function renderUpgrades() {
             // Set the id
             div.id = upgrade_id;
 
+            div.classList.add("upgrade"); 
+
             // Set the innerHTML
             div.innerHTML = `Name: ${upgrade.name}<br>Cost: ${upgrade.cost}<br>Value: ${upgrade.value}`; 
 

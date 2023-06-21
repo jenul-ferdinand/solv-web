@@ -1,0 +1,112 @@
+$bg_color: rgb(28, 27, 31);
+$item_color: rgb(44, 43, 47); 
+
+
+
+
+@font-face {
+    font-family: "Ubuntu-Medium";
+    src: url(fonts/Ubuntu-Medium.ttf);
+}
+
+body {
+    background-color: $bg_color;
+    color: white;
+    font-family: 'Ubuntu-Medium', sans-serif;
+    padding: 30px;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+
+
+
+/*======================================================================================================================
+MAIN GAME AREA
+======================================================================================================================*/
+#game {
+    // The game area takes up 70 percent horizontally 
+    flex: 70%;
+
+    #total-marks {
+        font-size: 250%;
+        line-height: 0;
+    }
+    
+    #details {
+        font-size: 120%;
+        line-height: 0.75;
+    }
+    
+    #question {
+        font-size: 250%;
+        line-height: 0;
+        padding-top: 2em;
+    }
+    
+    #answer {
+        background-color: $item_color;
+        color: white;
+        font-family: 'Ubuntu', sans-serif;
+        font-size: 200%;
+        padding: 12px;
+        max-width: 35px;
+        border-radius: 10px;
+        border: 2px solid transparent;
+        outline: none;
+    }
+}
+
+
+
+
+/*======================================================================================================================
+UPGRADES
+======================================================================================================================*/
+#upgrades {
+    // The upgrades area will take up 30% percent of the flex horizontally
+    flex: 30%;
+
+    // Padding between all four sides
+    padding: 20px; 
+
+    // Background colour of the upgrades area
+    background-color: $bg_color;
+
+    // Color of the text in the upgrades section
+    color: white;
+
+    // Rounded corners
+    border-radius: 10px; 
+
+    // Border thickness
+    border: 4px solid;
+
+    // Colour of the border
+    border-color: $item_color; 
+
+    // Automatically provide scrollbars when we overflow with upgrades
+    overflow: auto;
+
+
+
+    /*
+        UPGRADE
+    */ 
+    .upgrade {
+        // The colour of the upgrade
+        background-color: $item_color; 
+
+        // Rounded corners
+        border-radius: 10px; 
+
+        // Border thickness
+        border: 10px solid transparent; 
+
+        // Bottom margin so we don't have touching upgrades
+        margin-bottom: 10px
+    }
+}
+
+

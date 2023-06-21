@@ -1,56 +1,66 @@
 @font-face {
-    font-family: "Ubuntu-Medium";
-    src: url(fonts/Ubuntu-Medium.ttf);
+  font-family: "Ubuntu-Medium";
+  src: url(fonts/Ubuntu-Medium.ttf);
 }
-
 body {
-    background-color: rgb(28, 27, 31);
-    color: white;
-    font-family: 'Ubuntu-Medium', sans-serif;
-    padding: 30px;
-
-    display: flex;
-    justify-content: space-between;
+  background-color: rgb(28, 27, 31);
+  color: white;
+  font-family: "Ubuntu-Medium", sans-serif;
+  padding: 30px;
+  display: flex;
+  justify-content: space-between;
 }
 
+/*======================================================================================================================
+MAIN GAME AREA
+======================================================================================================================*/
 #game {
-    flex: 70%;
+  flex: 70%;
+}
+#game #total-marks {
+  font-size: 250%;
+  line-height: 0;
+}
+#game #details {
+  font-size: 120%;
+  line-height: 0.75;
+}
+#game #question {
+  font-size: 250%;
+  line-height: 0;
+  padding-top: 2em;
+}
+#game #answer {
+  background-color: rgb(44, 43, 47);
+  color: white;
+  font-family: "Ubuntu", sans-serif;
+  font-size: 200%;
+  padding: 12px;
+  max-width: 35px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  outline: none;
 }
 
+/*======================================================================================================================
+UPGRADES
+======================================================================================================================*/
 #upgrades {
-    flex: 30%;
-    padding: 15px; 
-    background-color: rgb(44, 43, 47);
-    color: white;
-    border-radius: 10px; 
-    border: 2px solid transparent;
-    overflow: auto;
+  flex: 30%;
+  padding: 20px;
+  background-color: rgb(28, 27, 31);
+  color: white;
+  border-radius: 10px;
+  border: 4px solid;
+  border-color: rgb(44, 43, 47);
+  overflow: auto;
+  /*
+      UPGRADE
+  */
 }
-
-#total-marks {
-    font-size: 250%;
-    line-height: 0;
-}
-
-#details {
-    font-size: 120%;
-    line-height: 0.75;
-}
-
-#question {
-    font-size: 250%;
-    line-height: 0;
-    padding-top: 2em;
-}
-
-#answer {
-    background-color: rgb(44, 43, 47);
-    color: white;
-    font-family: 'Ubuntu', sans-serif;
-    font-size: 200%;
-    padding: 12px;
-    max-width: 35px;
-    border-radius: 10px;
-    border: 2px solid transparent;
-    outline: none;
-}
+#upgrades .upgrade {
+  background-color: rgb(44, 43, 47);
+  border-radius: 10px;
+  border: 10px solid transparent;
+  margin-bottom: 10px;
+}/*# sourceMappingURL=style.css.map */
