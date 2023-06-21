@@ -44,22 +44,30 @@ function init() {
 
 function gameLoop(timeStamp) {
 
+    // * Render the upgrades
     renderUpgrades();
     
     // * Displayed marks interpolation
-    if (marks_displayed < marks) {
-        marks_displayed = Math.ceil(lerp(marks_displayed, marks, 0.3));
-        elemid('marks').innerHTML = marks_displayed;
+    // Check if marks displayed is not equal to the marks
+    if (marks_displayed !== marks) {
 
-        // Debugging
+        // Determine whether to round up or down based on whether marks_displayed is less than marks
+        let roundingFunction = marks_displayed < marks ? Math.ceil : Math.floor;
+        
+        // Lerp the marks, round as determined, and set the value
+        marks_displayed = roundingFunction(lerp(marks_displayed, marks, 0.3));
+        
+        // Update the 'marks' element and log the value
+        elemid('marks').innerHTML = marks_displayed;
         console.log(marks_displayed);
-    } 
+
+    }
 
     // * Marks per second
     mps_counter++;
     if (mps_counter >= 60) {
         marks += mps;
-
+        
         mps_counter = 0;
     }
 
