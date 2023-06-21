@@ -89,35 +89,40 @@ function renderUpgrades() {
     // Loop through each upgrade of the upgrades list
     for (let upgrade of upgrades) {
         
+        // Set a unique id for each upgrade
         let upgrade_id = `${upgrade.name}-${upgrade.cost}-${upgrade.value}`;
+
+        // Store the current upgrade based on it's id
         let upgrade_element = elemid(upgrade_id); 
         
         // When we have sufficient funds and upgrade doesn't exist
         if (marks >= upgrade.cost && !upgrade_element) {
 
-            // Create an upgrade element
-            let div = document.createElement("div");
-            div.id = upgrade_id;
-            div.classList.add("upgrade"); 
+            // Upgrade
+            let upgrade_div = document.createElement("div");
+            upgrade_div.id = upgrade_id;
+            upgrade_div.classList.add("upgrade"); 
 
-            // Create an img element
-            let img = document.createElement("img");
-            img.src = `images/${upgrade.name}.png`;
-            img.classList.add("upgrade-image");
+            // Image
+            let upgrade_image = document.createElement("img");
+            upgrade_image.src = `images/${upgrade.name}.png`;
+            upgrade_image.classList.add("upgrade-image");
 
-            let upgradeText = document.createElement("div");
-            upgradeText.className = "upgrade-text";
-            upgradeText.innerHTML = `Name: ${upgrade.name}<br>Cost: ${upgrade.cost}<br>Value: ${upgrade.value}`; 
-
-            div.appendChild(img);
-            div.appendChild(upgradeText);
+            // Text
+            let upgrade_text = document.createElement("div");
+            upgrade_text.className = "upgrade-text";
+            upgrade_text.innerHTML = `Name: ${upgrade.name}<br>Cost: ${upgrade.cost}<br>Value: ${upgrade.value}`; 
+            
+            // Append to the parent upgradeDiv
+            upgrade_div.appendChild(upgrade_image);
+            upgrade_div.appendChild(upgrade_text);
 
             // Append the upgrade to the "upgrades" container
-            upgrade_container.appendChild(div);
+            upgrade_container.appendChild(upgrade_div);
             
             // ? Debugging
             console.log(`Create Upgrade: ${upgrade.name}`);
-        
+
         } 
         // Insufficient funds condition and upgrade exists
         else if (marks < upgrade.cost && upgrade_element) {
@@ -127,6 +132,7 @@ function renderUpgrades() {
             
             // ? Debugging
             console.log(`Remove Upgrade: ${upgrade.name}`); 
+
         }
     }
 }

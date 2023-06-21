@@ -130,7 +130,11 @@ UPGRADES
 
         }
 
+        /*
+            On mouse hover event 
+        */
         &:hover {
+            // Change the colour of the upgrade to a lighter one
             background-color: $hover_color;
         }
     }
