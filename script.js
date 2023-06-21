@@ -21,9 +21,9 @@ var paused = false;
 
 // Upgrades
 var upgrades = [
-    {name: 'Testing', cost: 2},
-    {name: 'Lorem', cost: 3},
-    {name: 'Ipsum', cost: 4}
+    {name: 'pencil', cost: 2},
+    {name: 'amphetamine', cost: 3},
+    {name: 'animal_sacrifice', cost: 4}
 ]
 
 
@@ -95,16 +95,22 @@ function renderUpgrades() {
         // When we have sufficient funds and upgrade doesn't exist
         if (marks >= upgrade.cost && !upgrade_element) {
 
-            // Division for the upgrade
+            // Create an upgrade element
             let div = document.createElement("div");
-
-            // Set the id
             div.id = upgrade_id;
-
             div.classList.add("upgrade"); 
 
-            // Set the innerHTML
-            div.innerHTML = `Name: ${upgrade.name}<br>Cost: ${upgrade.cost}<br>Value: ${upgrade.value}`; 
+            // Create an img element
+            let img = document.createElement("img");
+            img.src = `images/${upgrade.name}.png`;
+            img.classList.add("upgrade-image");
+
+            let upgradeText = document.createElement("div");
+            upgradeText.className = "upgrade-text";
+            upgradeText.innerHTML = `Name: ${upgrade.name}<br>Cost: ${upgrade.cost}<br>Value: ${upgrade.value}`; 
+
+            div.appendChild(img);
+            div.appendChild(upgradeText);
 
             // Append the upgrade to the "upgrades" container
             upgrade_container.appendChild(div);

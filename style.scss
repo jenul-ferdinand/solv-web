@@ -1,5 +1,6 @@
 $bg_color: rgb(28, 27, 31);
 $item_color: rgb(44, 43, 47); 
+$hover_color: rgb(70, 69, 74);
 
 
 
@@ -105,7 +106,33 @@ UPGRADES
         border: 10px solid transparent; 
 
         // Bottom margin so we don't have touching upgrades
-        margin-bottom: 10px
+        margin-bottom: 10px;
+
+        // Use a flexbox layout
+        display: flex;
+
+        // Align items vertically in the center
+        align-items: center;
+
+        /*
+            Image
+        */
+        .upgrade-image {
+            height: 72px;
+            width: 72px; 
+            margin-right: 10px;
+        }
+
+        /*
+            Text
+        */
+        .upgrade-text {
+
+        }
+
+        &:hover {
+            background-color: $hover_color;
+        }
     }
 }
 

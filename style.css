@@ -63,4 +63,20 @@ UPGRADES
   border-radius: 10px;
   border: 10px solid transparent;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  /*
+      Image
+  */
+  /*
+      Text
+  */
+}
+#upgrades .upgrade .upgrade-image {
+  height: 72px;
+  width: 72px;
+  margin-right: 10px;
+}
+#upgrades .upgrade:hover {
+  background-color: rgb(70, 69, 74);
 }/*# sourceMappingURL=style.css.map */
