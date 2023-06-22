@@ -15,7 +15,7 @@ $upgrade_flash_initial_opacity: 0.7;
 
 body {
     background-color: $bg_color;
-    color: white;
+    //color: white;
     font-family: 'Ubuntu-Medium', sans-serif;
     padding: 30px;
 
@@ -79,7 +79,7 @@ UPGRADES
     background-color: $bg_color;
 
     // Color of the text in the upgrades section
-    color: white;
+    //color: white;
 
     // Rounded corners
     border-radius: 10px; 
@@ -132,7 +132,11 @@ UPGRADES
             Text
         */
         .upgrade-text {
-            
+            color: chartreuse; 
+
+            & span.cost {
+                color: chartreuse !important; 
+            }
         }
 
         /*
@@ -176,3 +180,4 @@ UPGRADES
     from {opacity: $upgrade_flash_initial_opacity;}
     to {opacity: 0;}
 }
+

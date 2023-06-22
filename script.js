@@ -111,31 +111,45 @@ function renderUpgrades() {
             // Text
             let upgrade_text = document.createElement("div");
             upgrade_text.className = "upgrade-text";
-            upgrade_text.innerHTML = `Name: ${upgrade.name}<br>Cost: ${upgrade.cost}<br>Value: ${upgrade.value}`; 
             
-            // Append to the parent upgradeDiv
+            // Format the words in the name ('hello_world' -> 'Hello World')
+            let capital_name = upgrade.name.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+
+            upgrade_text.innerHTML = `${capital_name}<br><br><br>`;
+
+            // Cost
+            let upgrade_cost = document.createElement("span");
+            upgrade_cost.className = "cost";
+            upgrade_cost.style.color = 'chartreuse'; 
+            upgrade_cost.textContent = `Price: ${upgrade.cost}`;
+
+            // Append cost to text div
+            upgrade_text.appendChild(upgrade_cost);
+
+            // Append to the parent upgrade_div
             upgrade_div.appendChild(upgrade_image);
             upgrade_div.appendChild(upgrade_text);
 
+
+
             // Purchasing upgrade
             upgrade_div.onclick = function() {
+
+                // We must have sufficient funds
                 if (marks >= upgrade.cost) {
-                    // Deduct the cost
-                    marks -= upgrade.cost;
-
-                    // Create the flash overlay
-                    let flash = document.createElement('div');
-
-                    // Assign it the class "flash"
-                    flash.className = 'flash';
-
-                    // Append it to the upgrade
-                    this.appendChild(flash);
+                    
+                    marks -= upgrade.cost; // Deduct the cost
+                    
+                    let flash = document.createElement('div'); // Create the flash overlay
+                    flash.className = 'flash'; // Assign it the class "flash"
+                    this.appendChild(flash); // Append it to the upgrade
 
                     // After a delay, remove the flash overlay
                     setTimeout(function() {
                         flash.parentNode.removeChild(flash);
                     }, 250);
+
+                    console.log(`Purchase Upgrade: ${upgrade.name} for ${upgrade.cost} marks`);
                 }
             }
 
