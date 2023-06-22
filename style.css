@@ -65,6 +65,7 @@ UPGRADES
   margin-bottom: 10px;
   display: flex;
   align-items: center;
+  position: relative;
   /*
       Image
   */
@@ -82,4 +83,26 @@ UPGRADES
 }
 #upgrades .upgrade:hover {
   background-color: rgb(70, 69, 74);
+}
+#upgrades .upgrade .flash {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: calc(100% + 20px);
+  height: calc(100% + 20px);
+  background: white;
+  opacity: 0.7;
+  border-radius: inherit;
+  transition: opacity 0.25s;
+  animation: flash 0.25s linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes flash {
+  from {
+    opacity: 0.7;
+  }
+  to {
+    opacity: 0;
+  }
 }/*# sourceMappingURL=style.css.map */

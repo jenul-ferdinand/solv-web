@@ -2,7 +2,10 @@ $bg_color: rgb(28, 27, 31);
 $item_color: rgb(44, 43, 47); 
 $hover_color: rgb(70, 69, 74);
 
-
+$upgrade_border_thickness: 10px;
+$upgrade_flash_colour: white; 
+$upgrade_flash_time: 0.25s;
+$upgrade_flash_initial_opacity: 0.7;
 
 
 @font-face {
@@ -103,7 +106,7 @@ UPGRADES
         border-radius: 10px; 
 
         // Border thickness
-        border: 10px solid transparent; 
+        border: $upgrade_border_thickness solid transparent; 
 
         // Bottom margin so we don't have touching upgrades
         margin-bottom: 10px;
@@ -113,6 +116,8 @@ UPGRADES
 
         // Align items vertically in the center
         align-items: center;
+
+        position: relative;
 
         /*
             Image
@@ -127,7 +132,7 @@ UPGRADES
             Text
         */
         .upgrade-text {
-
+            
         }
 
         /*
@@ -137,7 +142,37 @@ UPGRADES
             // Change the colour of the upgrade to a lighter one
             background-color: $hover_color;
         }
+
+        /*
+            Flash overlay
+        */
+        .flash {
+            position: absolute;
+            // Adjust flash sizing to match upgrade
+            top: -$upgrade_border_thickness;
+            left: -$upgrade_border_thickness;
+            width: calc(100% + ($upgrade_border_thickness * 2));
+            height: calc(100% + ($upgrade_border_thickness * 2));
+
+            // Inherit the rounded edges of the upgrade
+            border-radius: inherit;
+
+            // Flash colour
+            background: $upgrade_flash_colour;
+            opacity: $upgrade_initial_click_opacity;
+            
+            // Transition time
+            transition: opacity $upgrade_flash_time;
+            
+            // Flash Animation
+            animation: flash $upgrade_flash_time linear;
+            animation-fill-mode: forwards;
+        }
     }
 }
 
-
+// Flash keyframes
+@keyframes flash {
+    from {opacity: $upgrade_flash_initial_opacity;}
+    to {opacity: 0;}
+}

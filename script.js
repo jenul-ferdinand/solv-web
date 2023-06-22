@@ -117,6 +117,28 @@ function renderUpgrades() {
             upgrade_div.appendChild(upgrade_image);
             upgrade_div.appendChild(upgrade_text);
 
+            // Purchasing upgrade
+            upgrade_div.onclick = function() {
+                if (marks >= upgrade.cost) {
+                    // Deduct the cost
+                    marks -= upgrade.cost;
+
+                    // Create the flash overlay
+                    let flash = document.createElement('div');
+
+                    // Assign it the class "flash"
+                    flash.className = 'flash';
+
+                    // Append it to the upgrade
+                    this.appendChild(flash);
+
+                    // After a delay, remove the flash overlay
+                    setTimeout(function() {
+                        flash.parentNode.removeChild(flash);
+                    }, 250);
+                }
+            }
+
             // Append the upgrade to the "upgrades" container
             upgrade_container.appendChild(upgrade_div);
             
