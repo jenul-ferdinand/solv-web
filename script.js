@@ -26,6 +26,8 @@ var upgrades = [
     {name: 'animal_sacrifice', cost: 4}
 ]
 
+// Sounds
+const sound_upgrade_purchase = new Audio('audio/correct.mp3');
 
 /*======================================================================================================================
 GAME LOOP
@@ -134,23 +136,23 @@ function renderUpgrades() {
 
             // Purchasing upgrade
             upgrade_div.onclick = function() {
+                // Play the purchase upgrade sound
+                sound_upgrade_purchase.cloneNode().play();
+                
+                // Deduct the cost
+                marks -= upgrade.cost; 
+                
+                // Create a flash overlay
+                let flash = document.createElement('div'); // Create the flash overlay
+                flash.className = 'flash'; // Assign it the class "flash"
+                this.appendChild(flash); // Append it to the upgrade
 
-                // We must have sufficient funds
-                if (marks >= upgrade.cost) {
-                    
-                    marks -= upgrade.cost; // Deduct the cost
-                    
-                    let flash = document.createElement('div'); // Create the flash overlay
-                    flash.className = 'flash'; // Assign it the class "flash"
-                    this.appendChild(flash); // Append it to the upgrade
+                // After a delay, remove the flash overlay
+                setTimeout(function() {
+                    flash.parentNode.removeChild(flash);
+                }, 250);
 
-                    // After a delay, remove the flash overlay
-                    setTimeout(function() {
-                        flash.parentNode.removeChild(flash);
-                    }, 250);
-
-                    console.log(`Purchase Upgrade: ${upgrade.name} for ${upgrade.cost} marks`);
-                }
+                console.log(`Purchase Upgrade: ${upgrade.name} for ${upgrade.cost} marks`);
             }
 
             // Append the upgrade to the "upgrades" container
@@ -268,7 +270,6 @@ function getRandomInt(min, max) {
 function lerp(start, stop, magnitude) {
     return start + magnitude * (stop - start); 
 }
-
 
 
 
