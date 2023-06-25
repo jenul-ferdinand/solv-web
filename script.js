@@ -20,6 +20,15 @@ var solved = 0;
 var paused = false;
 
 // Upgrades
+var upgrade_container = null;
+var upgrade_div = null;
+var upgrade_image = null;
+var upgrade_text = null; 
+var upgrade_cost = null; 
+
+const upgrade_purchaseable_color = 'chartreuse';
+const upgrade_non_purchaseable_color = 'red';
+
 var upgrades = [
     {name: 'pencil', cost: 2, value: 1},
     {name: 'mathematician', cost: 3, value: 1},
@@ -32,6 +41,9 @@ var upgrades = [
 // Sounds
 const sound_upgrade_purchase = new Audio('audio/correct.mp3');
 
+
+
+
 /*======================================================================================================================
 GAME LOOP
 ========================================================================================================================*/
@@ -42,18 +54,19 @@ window.addEventListener('load', init);
 
 function init() {
 
-    // * Run game loop before next repaint
+    // Run game loop before next repaint
     window.requestAnimationFrame(gameLoop);
 
-    // * Render the upgrades
-    
+    // Create the upgrades
+    createUpgrades();
 
 }
 
 function gameLoop(timeStamp) {
 
-    
-    
+    // Checking and purchasing upgrades
+    purchaseUpgrades();
+ 
     // * Displayed marks interpolation
     // Check if marks displayed is not equal to the marks
     if (marks_displayed !== marks) {
@@ -75,8 +88,6 @@ function gameLoop(timeStamp) {
     if (mps_counter >= 60) {
         marks += mps;
 
-        renderUpgrades();
-        
         mps_counter = 0;
     }
 
@@ -91,103 +102,102 @@ function gameLoop(timeStamp) {
 RENDERING UPGRADES
 ======================================================================================================================*/
 
-function renderUpgrades() {
+function createUpgrades() {
     // Store the upgrades container
-    let upgrade_container = document.getElementById("upgrades");
+    let upgrade_container = elemid("upgrades");
 
-    // Loop through each upgrade of the upgrades list
     for (let upgrade of upgrades) {
-        
-        // Set a unique id for each upgrade
-        let upgrade_id = `${upgrade.name}-${upgrade.cost}-${upgrade.value}`;
 
-        // Store the current upgrade based on it's id
-        let upgrade_element = elemid(upgrade_id); 
-        
-        // When we have sufficient funds and upgrade doesn't exist
-        if (marks >= upgrade.cost && !upgrade_element) {
+        // Upgrade
+        upgrade_div = document.createElement("div");
+        upgrade_div.classList.add("upgrade"); 
 
-            // Upgrade
-            let upgrade_div = document.createElement("div");
-            upgrade_div.id = upgrade_id;
-            upgrade_div.classList.add("upgrade"); 
+        // Image
+        upgrade_image = document.createElement("img");
+        upgrade_image.src = `images/${upgrade.name}.png`;
+        upgrade_image.classList.add("upgrade-image");
 
-            // Image
-            let upgrade_image = document.createElement("img");
-            upgrade_image.src = `images/${upgrade.name}.png`;
-            upgrade_image.classList.add("upgrade-image");
+        // Text
+        upgrade_text = document.createElement("div");
+        upgrade_text.className = "upgrade-text";
+        // Format the words in the name ('hello_world' -> 'Hello World')
+        capital_name = upgrade.name.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        upgrade_text.innerHTML = `${capital_name}<br><br><br>`;
 
-            // Text
-            let upgrade_text = document.createElement("div");
-            upgrade_text.className = "upgrade-text";
-            // Format the words in the name ('hello_world' -> 'Hello World')
-            let capital_name = upgrade.name.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-            upgrade_text.innerHTML = `${capital_name}<br><br><br>`;
+        // Cost
+        upgrade_cost = document.createElement("span");
+        upgrade_cost.className = "cost";
+        upgrade_cost.style.color = upgrade_non_purchaseable_color;
+        upgrade_cost.textContent = `Price: ${upgrade.cost}`;
 
-            // Cost
-            let upgrade_cost = document.createElement("span");
-            upgrade_cost.className = "cost";
-            upgrade_cost.style.color = 'chartreuse'; 
-            upgrade_cost.textContent = `Price: ${upgrade.cost}`;
+        // Append cost to text div
+        upgrade_text.appendChild(upgrade_cost);
+        // Append to the parent upgrade_div
+        upgrade_div.appendChild(upgrade_image);
+        upgrade_div.appendChild(upgrade_text);
+        // Append the upgrade to the "upgrades" container
+        upgrade_container.appendChild(upgrade_div);
 
-            // Append cost to text div
-            upgrade_text.appendChild(upgrade_cost);
-
-            // Append to the parent upgrade_div
-            upgrade_div.appendChild(upgrade_image);
-            upgrade_div.appendChild(upgrade_text);
-
-            // === Purchasing === 
-            upgrade_div.onclick = function() {
-                // Play the purchase upgrade sound
-                //sound_upgrade_purchase.volume = 0.1;
-                //sound_upgrade_purchase.cloneNode().play();
-                
-                // Deduct the cost
-                marks -= upgrade.cost; 
-
-                // Add the value
-                if (upgrade.name == 'pencil') {
-                    question_value++;
-                    elemid('question-value').innerHTML = question_value;
-                } else { 
-                    mps += upgrade.value;
-                    elemid('marks-per-second').innerHTML = mps;
-                }
-                
-                // Create a flash overlay
-                let flash = document.createElement('div'); // Create the flash overlay
-                flash.className = 'flash'; // Assign it the class "flash"
-                this.appendChild(flash); // Append it to the upgrade
-
-                // After a delay, remove the flash overlay
-                setTimeout(function() {
-                    flash.parentNode.removeChild(flash);
-                }, 250);
-
-                console.log(`Purchase Upgrade: ${upgrade.name} for ${upgrade.cost} marks`);
-            }
-
-            // Append the upgrade to the "upgrades" container
-            upgrade_container.appendChild(upgrade_div);
-            
-            // ? Debugging
-            console.log(`Create Upgrade: ${upgrade.name}`);
-
-        } 
-        // Insufficient funds condition and upgrade exists
-        else if (marks < upgrade.cost && upgrade_element) {s
-            // Remove the upgrade
-            upgrade_container.removeChild(upgrade_element);
-            
-            // ? Debugging
-            console.log(`Remove Upgrade: ${upgrade.name}`); 
-        }
+        // Store the upgrade div in the upgrade
+        upgrade.div = upgrade_div; 
+        upgrade.image = upgrade_image;
+        upgrade.text = upgrade_text;
+        upgrade.cost_span = upgrade_cost;
 
         // Add CSS rule to prevent text selection for dynamically generated upgrades
         let style = document.createElement('style');
         style.innerHTML = '.upgrade-text { user-select: none; }';
         document.head.appendChild(style);
+
+    }
+}
+
+function purchaseUpgrades() {
+    for (let upgrade of upgrades) {
+
+        if (marks >= upgrade.cost) {
+
+            // Change the colour
+            if (upgrade.cost_span.style.color != upgrade_purchaseable_color) {
+                upgrade.cost_span.style.color = upgrade_purchaseable_color;
+            }
+
+            // Purchasing
+            upgrade.div.onclick = function() {
+                if (marks >= upgrade.cost) {
+
+                    // Deduct the cost
+                    marks -= upgrade.cost; 
+
+                    // Add the value
+                    if (upgrade.name == 'pencil') {
+                        question_value++;
+                        elemid('question-value').innerHTML = question_value;
+                    } else { 
+                        mps += upgrade.value;
+                        elemid('marks-per-second').innerHTML = mps;
+                    }
+                    
+                    // Create a flash overlay
+                    let flash = document.createElement('div'); // Create the flash overlay
+                    flash.className = 'flash'; // Assign it the class "flash"
+                    this.appendChild(flash); // Append it to the upgrade
+
+                    // After a delay, remove the flash overlay
+                    setTimeout(function() {
+                        flash.parentNode.removeChild(flash);
+                    }, 250);
+
+                    // ? Debugging
+                    console.log(`Purchase Upgrade: ${upgrade.name} for ${upgrade.cost} marks`);
+                }
+            }
+        } else if (marks < upgrade.cost) {
+            // Change the colour
+            if (upgrade.cost_span.style.color != upgrade_non_purchaseable_color) {
+                upgrade.cost_span.style.color = upgrade_non_purchaseable_color;
+            }
+        }
     }
 }
 
@@ -220,8 +230,6 @@ document.addEventListener("keydown", (event) => {
             // Clear the input                                 
             elemid('answer').value = "";    
 
-            renderUpgrades();
-            
             // Increment 'solved' count
             solved++;
             
