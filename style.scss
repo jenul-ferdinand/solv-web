@@ -120,26 +120,6 @@ UPGRADES
         position: relative;
 
         /*
-            Image
-        */
-        .upgrade-image {
-            height: 72px;
-            width: 72px; 
-            margin-right: 10px;
-        }
-
-        /*
-            Text
-        */
-        .upgrade-text {
-            color: chartreuse; 
-
-            & span.cost {
-                color: chartreuse !important; 
-            }
-        }
-
-        /*
             On mouse hover event 
         */
         &:hover {
@@ -173,6 +153,22 @@ UPGRADES
             animation-fill-mode: forwards;
         }
     }
+
+    /*
+        Image
+    */
+    .upgrade-image {
+        height: 72px;
+        width: 72px; 
+        margin-right: 10px;
+    }
+
+    /*
+        Text
+    */
+    .upgrade-text {
+        
+    }    
 }
 
 // Flash keyframes
@@ -180,4 +176,3 @@ UPGRADES
     from {opacity: $upgrade_flash_initial_opacity;}
     to {opacity: 0;}
 }
-

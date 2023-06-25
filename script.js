@@ -21,9 +21,12 @@ var paused = false;
 
 // Upgrades
 var upgrades = [
-    {name: 'pencil', cost: 2},
-    {name: 'amphetamine', cost: 3},
-    {name: 'animal_sacrifice', cost: 4}
+    {name: 'pencil', cost: 2, value: 1},
+    {name: 'mathematician', cost: 3, value: 1},
+    {name: 'trigonometry', cost: 4, value: 4},
+    {name: 'amphetamine', cost: 3000, value: 10},
+    {name: 'artificial_intelligence', cost: 10000, value: 40}, 
+    {name: 'quantum_computing', cost: 40000, value: 100},
 ]
 
 // Sounds
@@ -42,12 +45,14 @@ function init() {
     // * Run game loop before next repaint
     window.requestAnimationFrame(gameLoop);
 
+    // * Render the upgrades
+    
+
 }
 
 function gameLoop(timeStamp) {
 
-    // * Render the upgrades
-    renderUpgrades();
+    
     
     // * Displayed marks interpolation
     // Check if marks displayed is not equal to the marks
@@ -69,6 +74,8 @@ function gameLoop(timeStamp) {
     mps_counter++;
     if (mps_counter >= 60) {
         marks += mps;
+
+        renderUpgrades();
         
         mps_counter = 0;
     }
@@ -113,10 +120,8 @@ function renderUpgrades() {
             // Text
             let upgrade_text = document.createElement("div");
             upgrade_text.className = "upgrade-text";
-            
             // Format the words in the name ('hello_world' -> 'Hello World')
             let capital_name = upgrade.name.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-
             upgrade_text.innerHTML = `${capital_name}<br><br><br>`;
 
             // Cost
@@ -132,15 +137,23 @@ function renderUpgrades() {
             upgrade_div.appendChild(upgrade_image);
             upgrade_div.appendChild(upgrade_text);
 
-
-
-            // Purchasing upgrade
+            // === Purchasing === 
             upgrade_div.onclick = function() {
                 // Play the purchase upgrade sound
-                sound_upgrade_purchase.cloneNode().play();
+                //sound_upgrade_purchase.volume = 0.1;
+                //sound_upgrade_purchase.cloneNode().play();
                 
                 // Deduct the cost
                 marks -= upgrade.cost; 
+
+                // Add the value
+                if (upgrade.name == 'pencil') {
+                    question_value++;
+                    elemid('question-value').innerHTML = question_value;
+                } else { 
+                    mps += upgrade.value;
+                    elemid('marks-per-second').innerHTML = mps;
+                }
                 
                 // Create a flash overlay
                 let flash = document.createElement('div'); // Create the flash overlay
@@ -163,15 +176,18 @@ function renderUpgrades() {
 
         } 
         // Insufficient funds condition and upgrade exists
-        else if (marks < upgrade.cost && upgrade_element) {
-            
+        else if (marks < upgrade.cost && upgrade_element) {s
             // Remove the upgrade
             upgrade_container.removeChild(upgrade_element);
             
             // ? Debugging
             console.log(`Remove Upgrade: ${upgrade.name}`); 
-
         }
+
+        // Add CSS rule to prevent text selection for dynamically generated upgrades
+        let style = document.createElement('style');
+        style.innerHTML = '.upgrade-text { user-select: none; }';
+        document.head.appendChild(style);
     }
 }
 
@@ -204,8 +220,7 @@ document.addEventListener("keydown", (event) => {
             // Clear the input                                 
             elemid('answer').value = "";    
 
-            // Play sound effect                           
-            //elemid('correct').play();     
+            renderUpgrades();
             
             // Increment 'solved' count
             solved++;
@@ -241,7 +256,7 @@ document.addEventListener("keyup", (event) => {
             
             // Cancel the animation frame
             window.cancelAnimationFrame(repeating_request);
-            console.log("Pause");
+            console.log("Paused");
         }
     }
 });
