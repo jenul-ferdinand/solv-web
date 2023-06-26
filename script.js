@@ -25,6 +25,7 @@ var upgrade_div = null;
 var upgrade_image = null;
 var upgrade_text = null; 
 var upgrade_cost = null; 
+var overlay = null;
 
 const upgrade_purchaseable_color = 'chartreuse';
 const upgrade_non_purchaseable_color = 'red';
@@ -64,7 +65,7 @@ function init() {
 
 function gameLoop(timeStamp) {
 
-    // Checking and purchasing upgrades
+    // * Checking and purchasing upgrades
     purchaseUpgrades();
  
     // * Displayed marks interpolation
@@ -144,11 +145,16 @@ function createUpgrades() {
         upgrade.text = upgrade_text;
         upgrade.cost_span = upgrade_cost;
 
-        // Add CSS rule to prevent text selection for dynamically generated upgrades
-        let style = document.createElement('style');
-        style.innerHTML = '.upgrade-text { user-select: none; }';
-        document.head.appendChild(style);
+        // Create a dark overlay div
+        let dark_overlay = document.createElement('div');
+        dark_overlay.className = 'overlay'; 
+        upgrade.div.appendChild(dark_overlay);
+        upgrade.dark_overlay = dark_overlay;
 
+        // Add CSS rule to prevent text selection for dynamically generated upgrades
+        //let style = document.createElement('style');
+        //style.innerHTML = '.upgrade-text { user-select: none; }';
+        //document.head.appendChild(style);
     }
 }
 
@@ -159,7 +165,11 @@ function purchaseUpgrades() {
 
             // Change the colour
             if (upgrade.cost_span.style.color != upgrade_purchaseable_color) {
+                // Make the price text colour green
                 upgrade.cost_span.style.color = upgrade_purchaseable_color;
+
+                // Set the dark overlay opacity to zero
+                upgrade.dark_overlay.style.opacity = 0;
             }
 
             // Purchasing
@@ -190,11 +200,18 @@ function purchaseUpgrades() {
 
                     // ? Debugging
                     console.log(`Purchase Upgrade: ${upgrade.name} for ${upgrade.cost} marks`);
+
+                    
                 }
             }
         } else if (marks < upgrade.cost) {
+           
+            
             // Change the colour
             if (upgrade.cost_span.style.color != upgrade_non_purchaseable_color) {
+                // 
+                upgrade.dark_overlay.style.opacity = 0.5;
+
                 upgrade.cost_span.style.color = upgrade_non_purchaseable_color;
             }
         }

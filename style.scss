@@ -6,6 +6,7 @@ $upgrade_border_thickness: 10px;
 $upgrade_flash_colour: white; 
 $upgrade_flash_time: 0.25s;
 $upgrade_flash_initial_opacity: 0.7;
+$upgrade_overlay_initial_opacity: 0.5;
 
 
 @font-face {
@@ -15,7 +16,7 @@ $upgrade_flash_initial_opacity: 0.7;
 
 body {
     background-color: $bg_color;
-    //color: white;
+    color: white;
     font-family: 'Ubuntu-Medium', sans-serif;
     padding: 30px;
 
@@ -143,7 +144,7 @@ UPGRADES
 
             // Flash colour
             background: $upgrade_flash_colour;
-            opacity: $upgrade_initial_click_opacity;
+            opacity: $upgrade_flash_initial_opacity;
             
             // Transition time
             transition: opacity $upgrade_flash_time;
@@ -152,6 +153,25 @@ UPGRADES
             animation: flash $upgrade_flash_time linear;
             animation-fill-mode: forwards;
         }
+
+        /* 
+            Overlay
+        */
+        .overlay {
+            position: absolute;
+            // Adjust flash sizing to match upgrade
+            top: -$upgrade_border_thickness;
+            left: -$upgrade_border_thickness;
+            width: calc(100% + ($upgrade_border_thickness * 2));
+            height: calc(100% + ($upgrade_border_thickness * 2));
+        
+            // Inherit the rounded edges of the upgrade
+            border-radius: inherit;
+        
+            // Overlay colour
+            background-color: black;
+            opacity: $upgrade_overlay_initial_opacity;
+        } 
     }
 
     /*
@@ -167,9 +187,11 @@ UPGRADES
         Text
     */
     .upgrade-text {
-        
+        user-select: none;   
     }    
 }
+
+
 
 // Flash keyframes
 @keyframes flash {
