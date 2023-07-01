@@ -37,6 +37,11 @@ var upgrades = [
     {name: 'amphetamine', cost: 3000, value: 10},
     {name: 'artificial_intelligence', cost: 10000, value: 40}, 
     {name: 'quantum_computing', cost: 40000, value: 100},
+    {name: 'space_travel', cost: 200000, value: 400},
+    {name: 'time_travel', cost: 1500000, value: 6666},
+    {name: 'animal_sacrifice', cost: 123666444, value: 98765},
+    {name: 'undead_experiments', cost: 3999999999, value: 999999},
+    {name: 'nuclear_warfare', cost: 75000000000, value: 10000000}
 ]
 
 // Sounds
