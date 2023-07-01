@@ -8,6 +8,7 @@ $upgrade_flash_time: 0.25s;
 $upgrade_flash_initial_opacity: 0.7;
 $upgrade_overlay_initial_opacity: 0.5;
 
+$upgrades_max_height: 600px; 
 
 @font-face {
     font-family: "Ubuntu-Medium";
@@ -80,7 +81,7 @@ UPGRADES
     background-color: $bg_color;
 
     // Color of the text in the upgrades section
-    //color: white;
+    color: white;
 
     // Rounded corners
     border-radius: 10px; 
@@ -92,9 +93,10 @@ UPGRADES
     border-color: $item_color; 
 
     // Automatically provide scrollbars when we overflow with upgrades
-    overflow: auto;
+    overflow: scroll;
 
-
+    // Max height for the upgrades area
+    max-height: $upgrades_max_height;
 
     /*
         UPGRADE
