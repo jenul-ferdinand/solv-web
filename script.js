@@ -44,6 +44,12 @@ var upgrades = [
     {name: 'nuclear_warfare', cost: 75000000000, value: 10000000}
 ]
 
+// Loop for upgrades to initialise default values
+upgrades.forEach(function(upgrade) {
+    upgrade.originalCost = upgrade.cost;
+    upgrade.numberOfPurchases = 0;
+});
+
 // Sounds
 const sound_upgrade_purchase = new Audio('audio/correct.mp3');
 
@@ -166,6 +172,7 @@ function createUpgrades() {
 function purchaseUpgrades() {
     for (let upgrade of upgrades) {
 
+        // If we have sufficient funds to purchase this upgrade
         if (marks >= upgrade.cost) {
 
             // Change the colour
@@ -183,6 +190,13 @@ function purchaseUpgrades() {
 
                     // Deduct the cost
                     marks -= upgrade.cost; 
+
+                    // Increment numberOfPurchases
+                    upgrade.numberOfPurchases++;
+
+                    // Increase the cost of the upgrade
+                    upgrade.cost = upgrade.originalCost * (1 + 2 * upgrade.numberOfPurchases);
+                    upgrade.cost_span.textContent = `Price: ${upgrade.cost}`;
 
                     // Add the value
                     if (upgrade.name == 'pencil') {
