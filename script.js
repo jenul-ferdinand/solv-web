@@ -166,6 +166,43 @@ function createUpgrades() {
         //let style = document.createElement('style');
         //style.innerHTML = '.upgrade-text { user-select: none; }';
         //document.head.appendChild(style);
+
+
+
+        // Add event listener for tooltip display
+        upgrade_div.addEventListener('mouseover', (event) => {
+            // Get the tooltip element
+            const tooltip = elemid('tooltip');
+
+            // Set the tooltip content
+            tooltip.innerHTML = `Upgrade: ${upgrade.name}<br>Cost: ${upgrade.cost}<br>Testing`;
+
+            // Get the upgrade element's dimensions and position
+            const upgradeRect = upgrade_div.getBoundingClientRect();
+            const upgradeX = upgradeRect.left;
+            const upgradeY = upgradeRect.top;
+
+            // Calculate the tooltip position based on the mouse position
+            const tooltipWidth = tooltip.offsetWidth;
+            const tooltipX = upgradeX - upgradeRect.width - 60;
+            const tooltipY = event.clientY;
+
+            console.log(upgradeY)
+
+            tooltip.style.width = `${upgradeRect.width}px`;
+
+            // Position and show the tooltip
+            tooltip.style.left = `${tooltipX}px`;
+            tooltip.style.top = `${tooltipY}px`;
+            tooltip.style.display = 'block';
+        });
+
+        // Add event listener for tooltip hide
+        upgrade_div.addEventListener('mouseout', () => {
+            // Hide the tooltip
+            const tooltip = elemid('tooltip');
+            tooltip.style.display = 'none';
+        });
     }
 }
 
@@ -228,7 +265,7 @@ function purchaseUpgrades() {
             
             // Change the colour
             if (upgrade.cost_span.style.color != upgrade_non_purchaseable_color) {
-                // 
+                
                 upgrade.dark_overlay.style.opacity = 0.5;
 
                 upgrade.cost_span.style.color = upgrade_non_purchaseable_color;
