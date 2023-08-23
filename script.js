@@ -16,6 +16,7 @@ var bottom_value = 1;
 var top_value = 10;
 
 // Debugging
+var debug_mode = true;
 var solved = 0;
 var paused = false;
 
@@ -35,13 +36,13 @@ var upgrades = [
     {name: 'mathematician', cost: 3, value: 1},
     {name: 'trigonometry', cost: 4, value: 4},
     {name: 'amphetamine', cost: 3000, value: 10},
-    {name: 'artificial_intelligence', cost: 10000, value: 40}, 
-    {name: 'quantum_computing', cost: 40000, value: 100},
-    {name: 'space_travel', cost: 200000, value: 400},
-    {name: 'time_travel', cost: 1500000, value: 6666},
-    {name: 'animal_sacrifice', cost: 123666444, value: 98765},
-    {name: 'undead_experiments', cost: 3999999999, value: 999999},
-    {name: 'nuclear_warfare', cost: 75000000000, value: 10000000}
+    {name: 'artificial_intelligence', cost: 10_000, value: 40}, 
+    {name: 'quantum_computing', cost: 40_000, value: 100},
+    {name: 'space_travel', cost: 200_000, value: 400},
+    {name: 'time_travel', cost: 1_500_000, value: 6666},
+    {name: 'animal_sacrifice', cost: 123_666_444, value: 98_765},
+    {name: 'undead_experiments', cost: 3_999_999_999, value: 999_999},
+    {name: 'nuclear_warfare', cost: 75_000_000_000, value: 10_000_000}
 ]
 
 // Loop for upgrades to initialise default values
@@ -118,36 +119,31 @@ function createUpgrades() {
     // Store the upgrades container
     let upgrade_container = elemid("upgrades");
 
+    // Upgrades loop
     for (let upgrade of upgrades) {
 
         // Upgrade
         upgrade_div = document.createElement("div");
         upgrade_div.classList.add("upgrade"); 
-
         // Image
         upgrade_image = document.createElement("img");
         upgrade_image.src = `images/${upgrade.name}.png`;
         upgrade_image.classList.add("upgrade-image");
-
         // Text
         upgrade_text = document.createElement("div");
         upgrade_text.className = "upgrade-text";
-        // Format the words in the name ('hello_world' -> 'Hello World')
         capital_name = upgrade.name.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         upgrade_text.innerHTML = `${capital_name}<br><br><br>`;
-
         // Cost
         upgrade_cost = document.createElement("span");
         upgrade_cost.className = "cost";
         upgrade_cost.style.color = upgrade_non_purchaseable_color;
         upgrade_cost.textContent = `Price: ${upgrade.cost}`;
 
-        // Append cost to text div
+
         upgrade_text.appendChild(upgrade_cost);
-        // Append to the parent upgrade_div
         upgrade_div.appendChild(upgrade_image);
         upgrade_div.appendChild(upgrade_text);
-        // Append the upgrade to the "upgrades" container
         upgrade_container.appendChild(upgrade_div);
 
         // Store the upgrade div in the upgrade
@@ -162,21 +158,18 @@ function createUpgrades() {
         upgrade.div.appendChild(dark_overlay);
         upgrade.dark_overlay = dark_overlay;
 
-        // Add CSS rule to prevent text selection for dynamically generated upgrades
-        //let style = document.createElement('style');
-        //style.innerHTML = '.upgrade-text { user-select: none; }';
-        //document.head.appendChild(style);
-
-
-
-        // Add event listener for tooltip display
+        //? === MOUSE OVER ===
         upgrade_div.addEventListener('mouseover', (event) => {
             // Get the tooltip element
             const tooltip = elemid('tooltip');
 
             // Set the tooltip content
-            tooltip.innerHTML = `Upgrade: ${upgrade.name}<br>Cost: ${upgrade.cost}<br>Testing`;
-
+            if (upgrade.name == 'pencil') {
+                tooltip.innerHTML = `${upgrade.name}<br><br>+${upgrade.value} qv<br><br>${upgrade.numberOfPurchases} ${upgrade.name} giving ${upgrade.value * upgrade.numberOfPurchases} question value`;
+            } else {
+                tooltip.innerHTML = `${upgrade.name}<br><br>+${upgrade.value} mps<br><br>${upgrade.numberOfPurchases} ${upgrade.name} getting ${upgrade.value * upgrade.numberOfPurchases} marks per second`;
+            }
+            
             // Get the upgrade element's dimensions and position
             const upgradeRect = upgrade_div.getBoundingClientRect();
             const upgradeX = upgradeRect.left;
@@ -186,8 +179,6 @@ function createUpgrades() {
             const tooltipWidth = tooltip.offsetWidth;
             const tooltipX = upgradeX - upgradeRect.width - 60;
             const tooltipY = event.clientY;
-
-            console.log(upgradeY)
 
             tooltip.style.width = `${upgradeRect.width}px`;
 
@@ -209,33 +200,25 @@ function createUpgrades() {
 function purchaseUpgrades() {
     for (let upgrade of upgrades) {
 
-        // If we have sufficient funds to purchase this upgrade
+        //* SUFFICIENT FUNDS
         if (marks >= upgrade.cost) {
 
             // Change the colour
-            if (upgrade.cost_span.style.color != upgrade_purchaseable_color) {
-                // Make the price text colour green
-                upgrade.cost_span.style.color = upgrade_purchaseable_color;
+            upgradeAdjust(upgrade_purchaseable_color, 0, upgrade);
 
-                // Set the dark overlay opacity to zero
-                upgrade.dark_overlay.style.opacity = 0;
-            }
-
-            // Purchasing
+            //? === PURCHASE UPGRADE ===
             upgrade.div.onclick = function() {
                 if (marks >= upgrade.cost) {
 
-                    // Deduct the cost
-                    marks -= upgrade.cost; 
+                    marks -= upgrade.cost; // Deduct cost from marks
 
-                    // Increment numberOfPurchases
-                    upgrade.numberOfPurchases++;
+                    upgrade.numberOfPurchases++; // Increment no. of purchases
 
-                    // Increase the cost of the upgrade
+                    // Increase the cost
                     upgrade.cost = upgrade.originalCost * (1 + 2 * upgrade.numberOfPurchases);
                     upgrade.cost_span.textContent = `Price: ${upgrade.cost}`;
 
-                    // Add the value
+                    //* Reap the benefits
                     if (upgrade.name == 'pencil') {
                         question_value++;
                         elemid('question-value').innerHTML = question_value;
@@ -244,32 +227,23 @@ function purchaseUpgrades() {
                         elemid('marks-per-second').innerHTML = mps;
                     }
                     
-                    // Create a flash overlay
-                    let flash = document.createElement('div'); // Create the flash overlay
-                    flash.className = 'flash'; // Assign it the class "flash"
-                    this.appendChild(flash); // Append it to the upgrade
+                    // Flash bang effect on upgrade div
+                    let flash = document.createElement('div'); 
+                    flash.className = 'flash'; 
+                    this.appendChild(flash);
 
                     // After a delay, remove the flash overlay
-                    setTimeout(function() {
-                        flash.parentNode.removeChild(flash);
-                    }, 250);
+                    setTimeout(function() { flash.parentNode.removeChild(flash); }, 250);
 
-                    // ? Debugging
+                    // Debugging
                     console.log(`Purchase Upgrade: ${upgrade.name} for ${upgrade.cost} marks`);
-
-                    
                 }
             }
-        } else if (marks < upgrade.cost) {
-           
-            
-            // Change the colour
-            if (upgrade.cost_span.style.color != upgrade_non_purchaseable_color) {
-                
-                upgrade.dark_overlay.style.opacity = 0.5;
-
-                upgrade.cost_span.style.color = upgrade_non_purchaseable_color;
-            }
+        } 
+        //! INSUFFICIENT FUNDS
+        else if (marks < upgrade.cost) {
+            // Change the colour 
+            upgradeAdjust(upgrade_non_purchaseable_color, 0.5, upgrade);
         }
     }
 }
@@ -343,7 +317,18 @@ document.addEventListener("keyup", (event) => {
 });
 
 
+/*======================================================================================================================
+RENDERING UPGRADES
+======================================================================================================================*/
 
+document.addEventListener("keydown", (event) => {
+    if (event.key == '=') {
+        marks += 100_000;
+    } 
+    else if (event.key == '-') {
+        marks -= 100_000;
+    }
+});
 
 /*======================================================================================================================
 HELPER FUNCTIONS
@@ -367,10 +352,20 @@ function lerp(start, stop, magnitude) {
     return start + magnitude * (stop - start); 
 }
 
+// Change the upgrade's price text colour and overlay opacity
+function upgradeAdjust(color, overlay_opacity, upgrade) {
+    if (upgrade.cost_span.style.color != color) {
+                
+        upgrade.dark_overlay.style.opacity = overlay_opacity;
+
+        upgrade.cost_span.style.color = color;
+    }
+}
 
 
 /*======================================================================================================================
 REFERENCES:
 
 - Game loop concept is adapted from: https://spicyyoghurt.com/tutorials/html5-javascript-game-development/create-a-proper-game-loop-with-requestanimationframe
+- Some game concepts are inspired from Cookie Clicker by Orteil: https://orteil.dashnet.org/cookieclicker/ 
 ======================================================================================================================*/

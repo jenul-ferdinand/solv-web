@@ -32,9 +32,9 @@ body {
 MAIN GAME AREA
 ======================================================================================================================*/
 #game {
-    // The game area takes up 70 percent horizontally 
+    // The percentage the area takes up horizontally
     flex: 70%;
-
+    
     #total-marks {
         font-size: 250%;
         line-height: 0;
@@ -71,7 +71,7 @@ MAIN GAME AREA
 UPGRADES
 ======================================================================================================================*/
 #upgrades {
-    // The upgrades area will take up 30% percent of the flex horizontally
+    // The percentage the area takes up horizontally
     flex: 30%;
 
     // Padding between all four sides
@@ -120,6 +120,7 @@ UPGRADES
         // Align items vertically in the center
         align-items: center;
 
+        // Position of upgrade
         position: relative;
 
         /*
