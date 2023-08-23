@@ -56,7 +56,6 @@ const sound_upgrade_purchase = new Audio('audio/correct.mp3');
 
 
 
-
 /*======================================================================================================================
 GAME LOOP
 ========================================================================================================================*/
@@ -140,7 +139,6 @@ function createUpgrades() {
         upgrade_cost.style.color = upgrade_non_purchaseable_color;
         upgrade_cost.textContent = `Price: ${upgrade.cost}`;
 
-
         upgrade_text.appendChild(upgrade_cost);
         upgrade_div.appendChild(upgrade_image);
         upgrade_div.appendChild(upgrade_text);
@@ -209,16 +207,18 @@ function purchaseUpgrades() {
             //? === PURCHASE UPGRADE ===
             upgrade.div.onclick = function() {
                 if (marks >= upgrade.cost) {
-
-                    marks -= upgrade.cost; // Deduct cost from marks
-
-                    upgrade.numberOfPurchases++; // Increment no. of purchases
+                    
+                    // Deduct cost from marks
+                    marks -= upgrade.cost;
+                    
+                    // Increment no. of purchases
+                    upgrade.numberOfPurchases++; 
 
                     // Increase the cost
                     upgrade.cost = upgrade.originalCost * (1 + 2 * upgrade.numberOfPurchases);
                     upgrade.cost_span.textContent = `Price: ${upgrade.cost}`;
 
-                    //* Reap the benefits
+                    // Reap the benefits
                     if (upgrade.name == 'pencil') {
                         question_value++;
                         elemid('question-value').innerHTML = formatNumber(question_value);
