@@ -91,7 +91,7 @@ function gameLoop(timeStamp) {
         marks_displayed = roundingFunction(lerp(marks_displayed, marks, 0.3));
         
         // Update the 'marks' element and log the value
-        elemid('marks').innerHTML = marks_displayed;
+        elemid('marks').innerHTML = formatNumber(marks_displayed);
         console.log(marks_displayed);
 
     }
@@ -103,7 +103,7 @@ function gameLoop(timeStamp) {
 
         mps_counter = 0;
     }
-
+ 
     // * Request again
     repeating_request = window.requestAnimationFrame(gameLoop);
 }
@@ -221,10 +221,10 @@ function purchaseUpgrades() {
                     //* Reap the benefits
                     if (upgrade.name == 'pencil') {
                         question_value++;
-                        elemid('question-value').innerHTML = question_value;
+                        elemid('question-value').innerHTML = formatNumber(question_value);
                     } else { 
                         mps += upgrade.value;
-                        elemid('marks-per-second').innerHTML = mps;
+                        elemid('marks-per-second').innerHTML = formatNumber(mps);
                     }
                     
                     // Flash bang effect on upgrade div
@@ -318,7 +318,7 @@ document.addEventListener("keyup", (event) => {
 
 
 /*======================================================================================================================
-RENDERING UPGRADES
+DEBUG MODE
 ======================================================================================================================*/
 
 document.addEventListener("keydown", (event) => {
@@ -329,6 +329,7 @@ document.addEventListener("keydown", (event) => {
         marks -= 100_000;
     }
 });
+
 
 /*======================================================================================================================
 HELPER FUNCTIONS
@@ -360,6 +361,48 @@ function upgradeAdjust(color, overlay_opacity, upgrade) {
 
         upgrade.cost_span.style.color = color;
     }
+}
+
+// Large number representation
+function formatNumber(number) {
+    if (number < 1_000_000) { return number }; 
+
+    const suffixes = [
+        "",
+        "Thousand",
+        "Million",
+        "Billion",
+        "Trillion",
+        "Quadrillion",
+        "Quintillion",
+        "Sextillion",
+        "Septillion",
+        "Octillion",
+        "Nonillion",
+        "Decillion",
+        "Undecillion",
+        "Duodecillion",
+        "Tredecillion",
+        "Quattuordecillion",
+        "Quindecillion",
+        "Sexdecillion",
+        "Septendecillion",
+        "Octodecillion",
+        "Novemdecillion",
+        "Vigintillion",
+    ];
+
+    const base = 1000;
+    let index = 0;
+
+    while (number >= base) {
+        number /= base;
+        index++;
+    }
+
+    const roundedNumber = Math.round(number * 1000) / 1000; // Round to one decimal place
+
+    return `${roundedNumber} ${suffixes[index]}`;
 }
 
 
