@@ -2,16 +2,9 @@
 INSTANCE VARIABLES
 ======================================================================================================================*/
 
-// Marks
-var marks = 0;
-var marks_displayed = 0; 
-
 // Marks per second
 var mps = 0;
 var mps_counter = 0;
-
-// Question
-var question_value = 1;
 var bottom_value = 1;
 var top_value = 10;
 
@@ -31,224 +24,232 @@ var overlay = null;
 const upgrade_purchaseable_color = 'chartreuse';
 const upgrade_non_purchaseable_color = 'red';
 
-var upgrades = [
-    {name: 'pencil', cost: 2, value: 1},
-    {name: 'mathematician', cost: 3, value: 1},
-    {name: 'trigonometry', cost: 4, value: 4},
-    {name: 'amphetamine', cost: 3000, value: 10},
-    {name: 'artificial_intelligence', cost: 10_000, value: 40}, 
-    {name: 'quantum_computing', cost: 40_000, value: 100},
-    {name: 'space_travel', cost: 200_000, value: 400},
-    {name: 'time_travel', cost: 1_500_000, value: 6666},
-    {name: 'animal_sacrifice', cost: 123_666_444, value: 98_765},
-    {name: 'undead_experiments', cost: 3_999_999_999, value: 999_999},
-    {name: 'nuclear_warfare', cost: 75_000_000_000, value: 10_000_000}
-]
-
-// Loop for upgrades to initialise default values
-upgrades.forEach(function(upgrade) {
-    upgrade.originalCost = upgrade.cost;
-    upgrade.numberOfPurchases = 0;
-});
-
 // Sounds
 const sound_upgrade_purchase = new Audio('audio/correct.mp3');
 
-
-
-/*======================================================================================================================
-GAME LOOP
-========================================================================================================================*/
-
-//window.onload = init;
-
-window.addEventListener('load', init); 
-
-function init() {
-
-    // Run game loop before next repaint
-    window.requestAnimationFrame(gameLoop);
-
-    // Create the upgrades
-    createUpgrades();
-
-}
-
-function gameLoop(timeStamp) {
-
-    // * Checking and purchasing upgrades
-    purchaseUpgrades();
- 
-    // * Displayed marks interpolation
-    // Check if marks displayed is not equal to the marks
-    if (marks_displayed !== marks) {
-
-        // Determine whether to round up or down based on whether marks_displayed is less than marks
-        let roundingFunction = marks_displayed < marks ? Math.ceil : Math.floor;
-        
-        // Lerp the marks, round as determined, and set the value
-        marks_displayed = roundingFunction(lerp(marks_displayed, marks, 0.3));
-        
-        // Update the 'marks' element and log the value
-        elemid('marks').innerHTML = formatNumber(marks_displayed);
-        console.log(marks_displayed);
-
+class Upgrade { 
+    constructor(name, cost, value) {
+        this.name = name;
+        this.cost = cost;
+        this.originalCost = cost;
+        this.value = value;
+        this.numberOfPurchases = 0;
     }
 
-    // * Marks per second
-    mps_counter++;
-    if (mps_counter >= 60) {
-        marks += mps;
+    purchase() { 
+        if (marks >= this.cost) {
+            marks -= this.cost;
+            this.numberOfPurchases++;
+            this.cost = this.originalCost * (1 + 2 * this.numberOfPurchases);
+            return true;
+        }
 
-        mps_counter = 0;
+        return false;
     }
- 
-    // * Request again
-    repeating_request = window.requestAnimationFrame(gameLoop);
 }
 
+class Game {
+    constructor() {
+        this.marks = 0;
+        this.marksDisplayed = 0;
+        this.mps = 0;
+        this.mpsCounter = 0;
+        this.paused = false;
+        this.upgrades = [
+            new Upgrade('pencil', 2, 1),
+            new Upgrade('mathematician', 3, 1),
+            new Upgrade('trigonometry', 4, 4),
+            new Upgrade('amphetamine', 3000, 10),
+            new Upgrade('artificial_intelligence', 10000, 40),
+            new Upgrade('quantum_computing', 40000, 100),
+            new Upgrade('space_travel', 200000, 400),
+            new Upgrade('time_travel', 1500000, 6666),
+            new Upgrade('animal_sacrifice', 123666444, 98765),
+            new Upgrade('undead_experiments', 3999999999, 999999),
+            new Upgrade('nuclear_warfare', 75000000000, 10000000)
+        ];
+    }
 
+    init() {
+        window.addEventListener('load', () => {
+            this.gameLoop();
+            this.createUpgrades();
+        });
+    }
 
+    gameLoop() {
+        // * Checking and purchasing upgrades
+        this.purchaseUpgrades();
 
-/*======================================================================================================================
-RENDERING UPGRADES
-======================================================================================================================*/
+        // * Displayed marks interpolation
+        // Check if marks displayed is not equal to the marks
+        if (this.marks_displayed !== this.marks) {
 
-function createUpgrades() {
-    // Store the upgrades container
-    let upgrade_container = elemid("upgrades");
-
-    // Upgrades loop
-    for (let upgrade of upgrades) {
-
-        // Upgrade
-        upgrade_div = document.createElement("div");
-        upgrade_div.classList.add("upgrade"); 
-        // Image
-        upgrade_image = document.createElement("img");
-        upgrade_image.src = `images/${upgrade.name}.png`;
-        upgrade_image.classList.add("upgrade-image");
-        // Text
-        upgrade_text = document.createElement("div");
-        upgrade_text.className = "upgrade-text";
-        capital_name = upgrade.name.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-        upgrade_text.innerHTML = `${capital_name}<br><br><br>`;
-        // Cost
-        upgrade_cost = document.createElement("span");
-        upgrade_cost.className = "cost";
-        upgrade_cost.style.color = upgrade_non_purchaseable_color;
-        upgrade_cost.textContent = `Price: ${upgrade.cost}`;
-
-        upgrade_text.appendChild(upgrade_cost);
-        upgrade_div.appendChild(upgrade_image);
-        upgrade_div.appendChild(upgrade_text);
-        upgrade_container.appendChild(upgrade_div);
-
-        // Store the upgrade div in the upgrade
-        upgrade.div = upgrade_div; 
-        upgrade.image = upgrade_image;
-        upgrade.text = upgrade_text;
-        upgrade.cost_span = upgrade_cost;
-
-        // Create a dark overlay div
-        let dark_overlay = document.createElement('div');
-        dark_overlay.className = 'overlay'; 
-        upgrade.div.appendChild(dark_overlay);
-        upgrade.dark_overlay = dark_overlay;
-
-        //? === MOUSE OVER ===
-        upgrade_div.addEventListener('mouseover', (event) => {
-            // Get the tooltip element
-            const tooltip = elemid('tooltip');
-
-            // Set the tooltip content
-            if (upgrade.name == 'pencil') {
-                tooltip.innerHTML = `${upgrade.name}<br><br>+${upgrade.value} qv<br><br>${upgrade.numberOfPurchases} ${upgrade.name} giving ${upgrade.value * upgrade.numberOfPurchases} question value`;
-            } else {
-                tooltip.innerHTML = `${upgrade.name}<br><br>+${upgrade.value} mps<br><br>${upgrade.numberOfPurchases} ${upgrade.name} getting ${upgrade.value * upgrade.numberOfPurchases} marks per second`;
-            }
+            // Determine whether to round up or down based on whether marks_displayed is less than marks
+            let roundingFunction = this.marks_displayed < this.marks ? Math.ceil : Math.floor;
             
-            // Get the upgrade element's dimensions and position
-            const upgradeRect = upgrade_div.getBoundingClientRect();
-            const upgradeX = upgradeRect.left;
-            const upgradeY = upgradeRect.top;
+            // Lerp the marks, round as determined, and set the value
+            this.marks_displayed = roundingFunction(lerp(this.marks_displayed, this.marks, 0.3));
+            
+            // Update the 'marks' element and log the value
+            elemid('marks').innerHTML = formatNumber(this.marks_displayed);
+            console.log(this.marks_displayed);
 
-            // Calculate the tooltip position based on the mouse position
-            const tooltipWidth = tooltip.offsetWidth;
-            const tooltipX = upgradeX - upgradeRect.width - 60;
-            const tooltipY = event.clientY;
+        }
 
-            tooltip.style.width = `${upgradeRect.width}px`;
+        // * Marks per second
+        this.mps_counter++;
+        if (this.mps_counter >= 60) {
+            this.marks += this.mps;
 
-            // Position and show the tooltip
-            tooltip.style.left = `${tooltipX}px`;
-            tooltip.style.top = `${tooltipY}px`;
-            tooltip.style.display = 'block';
-        });
+            this.mps_counter = 0;
+        }
 
-        // Add event listener for tooltip hide
-        upgrade_div.addEventListener('mouseout', () => {
-            // Hide the tooltip
-            const tooltip = elemid('tooltip');
-            tooltip.style.display = 'none';
-        });
+        // * Request again
+        window.requestAnimationFrame(() => this.gameLoop());
     }
-}
 
-function purchaseUpgrades() {
-    for (let upgrade of upgrades) {
+    createUpgrades() {
+        // Store the upgrades container
+        let upgrade_container = elemid("upgrades");
 
-        //* SUFFICIENT FUNDS
-        if (marks >= upgrade.cost) {
+        // Upgrades loop
+        for (let upgrade of this.upgrades) {
 
-            // Change the colour
-            upgradeAdjust(upgrade_purchaseable_color, 0, upgrade);
+            // Upgrade
+            upgrade_div = document.createElement("div");
+            upgrade_div.classList.add("upgrade"); 
+            // Image
+            upgrade_image = document.createElement("img");
+            upgrade_image.src = `images/${upgrade.name}.png`;
+            upgrade_image.classList.add("upgrade-image");
+            // Text
+            upgrade_text = document.createElement("div");
+            upgrade_text.className = "upgrade-text";
+            var capital_name = upgrade.name.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            upgrade_text.innerHTML = `${capital_name}<br><br><br>`;
+            // Cost
+            upgrade_cost = document.createElement("span");
+            upgrade_cost.className = "cost";
+            upgrade_cost.style.color = upgrade_non_purchaseable_color;
+            upgrade_cost.textContent = `Price: ${upgrade.cost}`;
 
-            //? === PURCHASE UPGRADE ===
-            upgrade.div.onclick = function() {
-                if (marks >= upgrade.cost) {
-                    
-                    // Deduct cost from marks
-                    marks -= upgrade.cost;
-                    
-                    // Increment no. of purchases
-                    upgrade.numberOfPurchases++; 
+            upgrade_text.appendChild(upgrade_cost);
+            upgrade_div.appendChild(upgrade_image);
+            upgrade_div.appendChild(upgrade_text);
+            upgrade_container.appendChild(upgrade_div);
 
-                    // Increase the cost
-                    upgrade.cost = upgrade.originalCost * (1 + 2 * upgrade.numberOfPurchases);
-                    upgrade.cost_span.textContent = `Price: ${upgrade.cost}`;
+            // Store the upgrade div in the upgrade
+            upgrade.div = upgrade_div; 
+            upgrade.image = upgrade_image;
+            upgrade.text = upgrade_text;
+            upgrade.cost_span = upgrade_cost;
 
-                    // Reap the benefits
-                    if (upgrade.name == 'pencil') {
-                        question_value++;
-                        elemid('question-value').innerHTML = formatNumber(question_value);
-                    } else { 
-                        mps += upgrade.value;
-                        elemid('marks-per-second').innerHTML = formatNumber(mps);
-                    }
-                    
-                    // Flash bang effect on upgrade div
-                    let flash = document.createElement('div'); 
-                    flash.className = 'flash'; 
-                    this.appendChild(flash);
+            // Create a dark overlay div
+            let dark_overlay = document.createElement('div');
+            dark_overlay.className = 'overlay'; 
+            upgrade.div.appendChild(dark_overlay);
+            upgrade.dark_overlay = dark_overlay;
 
-                    // After a delay, remove the flash overlay
-                    setTimeout(function() { flash.parentNode.removeChild(flash); }, 250);
+            //? === MOUSE OVER ===
+            upgrade_div.addEventListener('mouseover', (event) => {
+                // Get the tooltip element
+                const tooltip = elemid('tooltip');
 
-                    // Debugging
-                    console.log(`Purchase Upgrade: ${upgrade.name} for ${upgrade.cost} marks`);
+                // Set the tooltip content
+                if (upgrade.name == 'pencil') {
+                    tooltip.innerHTML = `${upgrade.name}<br><br>+${upgrade.value} qv<br><br>${upgrade.numberOfPurchases} ${upgrade.name} giving ${upgrade.value * upgrade.numberOfPurchases} question value`;
+                } else {
+                    tooltip.innerHTML = `${upgrade.name}<br><br>+${upgrade.value} mps<br><br>${upgrade.numberOfPurchases} ${upgrade.name} getting ${upgrade.value * upgrade.numberOfPurchases} marks per second`;
                 }
+                
+                // Get the upgrade element's dimensions and position
+                const upgradeRect = upgrade_div.getBoundingClientRect();
+                const upgradeX = upgradeRect.left;
+                const upgradeY = upgradeRect.top;
+
+                // Calculate the tooltip position based on the mouse position
+                const tooltipWidth = tooltip.offsetWidth;
+                const tooltipX = upgradeX - upgradeRect.width - 60;
+                const tooltipY = event.clientY;
+
+                tooltip.style.width = `${upgradeRect.width}px`;
+
+                // Position and show the tooltip
+                tooltip.style.left = `${tooltipX}px`;
+                tooltip.style.top = `${tooltipY}px`;
+                tooltip.style.display = 'block';
+            });
+
+            // Add event listener for tooltip hide
+            upgrade_div.addEventListener('mouseout', () => {
+                // Hide the tooltip
+                const tooltip = elemid('tooltip');
+                tooltip.style.display = 'none';
+            });
+        }
+    }
+
+    purchaseUpgrades() {
+        for (let upgrade of this.upgrades) {
+    
+            //* SUFFICIENT FUNDS
+            if (marks >= upgrade.cost) {
+    
+                // Change the colour
+                upgradeAdjust(upgrade_purchaseable_color, 0, upgrade);
+    
+                //? === PURCHASE UPGRADE ===
+                upgrade.div.onclick = function() {
+                    if (marks >= upgrade.cost) {
+                        
+                        // Deduct cost from marks
+                        marks -= upgrade.cost;
+                        
+                        // Increment no. of purchases
+                        upgrade.numberOfPurchases++; 
+    
+                        // Increase the cost
+                        upgrade.cost = upgrade.originalCost * (1 + 2 * upgrade.numberOfPurchases);
+                        upgrade.cost_span.textContent = `Price: ${upgrade.cost}`;
+    
+                        // Reap the benefits
+                        if (upgrade.name == 'pencil') {
+                            question_value++;
+                            elemid('question-value').innerHTML = formatNumber(question_value);
+                        } else { 
+                            mps += upgrade.value;
+                            elemid('marks-per-second').innerHTML = formatNumber(mps);
+                        }
+                        
+                        // Flash bang effect on upgrade div
+                        let flash = document.createElement('div'); 
+                        flash.className = 'flash'; 
+                        this.appendChild(flash);
+    
+                        // After a delay, remove the flash overlay
+                        setTimeout(function() { flash.parentNode.removeChild(flash); }, 250);
+    
+                        // Debugging
+                        console.log(`Purchase Upgrade: ${upgrade.name} for ${upgrade.cost} marks`);
+                    }
+                }
+            } 
+            //! INSUFFICIENT FUNDS
+            else if (marks < upgrade.cost) {
+                // Change the colour 
+                upgradeAdjust(upgrade_non_purchaseable_color, 0.5, upgrade);
             }
-        } 
-        //! INSUFFICIENT FUNDS
-        else if (marks < upgrade.cost) {
-            // Change the colour 
-            upgradeAdjust(upgrade_non_purchaseable_color, 0.5, upgrade);
         }
     }
 }
 
+const game = new Game();
+game.init();
 
+/*======================================================================================================================
+GAME LOOP
+========================================================================================================================*/
 
 
 /*======================================================================================================================
@@ -272,7 +273,7 @@ document.addEventListener("keydown", (event) => {
             elemid('value2').innerHTML = value2;
             
             // Add Marks
-            marks += question_value;    
+            game.marks += game.question_value;    
 
             // Clear the input                                 
             elemid('answer').value = "";    
@@ -296,25 +297,7 @@ document.addEventListener("keydown", (event) => {
 PAUSING GAME
 ========================================================================================================================*/
 
-document.addEventListener("keyup", (event) => {
-    if (event.key === 'Escape') {
-        if (paused) {
-            // Un-paused
-            paused = false;
-            
-            // Restart the animation frame
-            window.requestAnimationFrame(gameLoop);
-            console.log("Un-Pause");
-        } else {
-            // Pause
-            paused = true;
-            
-            // Cancel the animation frame
-            window.cancelAnimationFrame(repeating_request);
-            console.log("Paused");
-        }
-    }
-});
+
 
 
 /*======================================================================================================================
