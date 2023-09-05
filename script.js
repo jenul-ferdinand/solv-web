@@ -4,7 +4,7 @@ INSTANCE VARIABLES
 
 // Marks
 var marks = 0;
-var marks_displayed = 0; 
+var marks_displayed = 0;
 
 // Marks per second
 var mps = 0;
@@ -24,8 +24,8 @@ var paused = false;
 var upgrade_container = null;
 var upgrade_div = null;
 var upgrade_image = null;
-var upgrade_text = null; 
-var upgrade_cost = null; 
+var upgrade_text = null;
+var upgrade_cost = null;
 var overlay = null;
 
 const upgrade_purchaseable_color = 'chartreuse';
@@ -163,9 +163,9 @@ function createUpgrades() {
 
             // Set the tooltip content
             if (upgrade.name == 'pencil') {
-                tooltip.innerHTML = `${upgrade.name}<br><br>+${upgrade.value} qv<br><br>${upgrade.numberOfPurchases} ${upgrade.name} giving ${upgrade.value * upgrade.numberOfPurchases} question value`;
+                tooltip.innerHTML = `${upgrade.name.toUpperCase()}<br><br>+${upgrade.value} qv<br><br>${upgrade.numberOfPurchases} ${upgrade.name}'s giving ${upgrade.value * upgrade.numberOfPurchases} question value`;
             } else {
-                tooltip.innerHTML = `${upgrade.name}<br><br>+${upgrade.value} mps<br><br>${upgrade.numberOfPurchases} ${upgrade.name} getting ${upgrade.value * upgrade.numberOfPurchases} marks per second`;
+                tooltip.innerHTML = `${upgrade.name.toUpperCase()}<br><br>+${upgrade.value} mps<br><br>${upgrade.numberOfPurchases} ${upgrade.name}'s getting ${upgrade.value * upgrade.numberOfPurchases} marks per second`;
             }
             
             // Get the upgrade element's dimensions and position
