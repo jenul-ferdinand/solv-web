@@ -16,7 +16,7 @@ var bottom_value = 1;
 var top_value = 10;
 
 // Debugging
-var debug_mode = true;
+var debug_mode = true
 var solved = 0;
 var paused = false;
 
@@ -258,7 +258,7 @@ SUBMISSION OF ANSWER
 document.addEventListener("keydown", (event) => {
     // If the user submits the answer
     if (event.key === 'Enter') {
-        // Get values
+        // Get values 
         var value1 = parseInt(elemid('value1').innerHTML);
         var value2 = parseInt(elemid('value2').innerHTML);
         var answer = elemid('answer').value;
@@ -282,6 +282,17 @@ document.addEventListener("keydown", (event) => {
             
             // Debugging
             console.log(`Correct, Marks: ${marks}`);
+
+            // Confetti
+            confetti({
+                particleCount: 100,
+                spread: 360,
+                startVelocity: 30,
+                origin: {
+                    x: Math.random(),
+                    y: Math.random()
+                }
+            });
         } else {
             // Debugging
             console.log('Wrong.');
