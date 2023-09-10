@@ -4,7 +4,7 @@ INSTANCE VARIABLES
 
 // Marks
 var marks = 0;
-var marks_displayed = 0; 
+var marks_displayed = 0;
 
 // Marks per second
 var mps = 0;
@@ -24,8 +24,8 @@ var paused = false;
 var upgrade_container = null;
 var upgrade_div = null;
 var upgrade_image = null;
-var upgrade_text = null; 
-var upgrade_cost = null; 
+var upgrade_text = null;
+var upgrade_cost = null;
 var overlay = null;
 
 const upgrade_purchaseable_color = 'chartreuse';
@@ -53,7 +53,6 @@ upgrades.forEach(function(upgrade) {
 
 // Sounds
 const sound_upgrade_purchase = new Audio('audio/correct.mp3');
-
 
 
 
@@ -140,7 +139,6 @@ function createUpgrades() {
         upgrade_cost.style.color = upgrade_non_purchaseable_color;
         upgrade_cost.textContent = `Price: ${upgrade.cost}`;
 
-
         upgrade_text.appendChild(upgrade_cost);
         upgrade_div.appendChild(upgrade_image);
         upgrade_div.appendChild(upgrade_text);
@@ -165,9 +163,9 @@ function createUpgrades() {
 
             // Set the tooltip content
             if (upgrade.name == 'pencil') {
-                tooltip.innerHTML = `${upgrade.name}<br><br>+${upgrade.value} qv<br><br>${upgrade.numberOfPurchases} ${upgrade.name} giving ${upgrade.value * upgrade.numberOfPurchases} question value`;
+                tooltip.innerHTML = `${upgrade.name.toUpperCase()}<br><br>+${upgrade.value} qv<br><br>${upgrade.numberOfPurchases} ${upgrade.name}'s giving ${upgrade.value * upgrade.numberOfPurchases} question value`;
             } else {
-                tooltip.innerHTML = `${upgrade.name}<br><br>+${upgrade.value} mps<br><br>${upgrade.numberOfPurchases} ${upgrade.name} getting ${upgrade.value * upgrade.numberOfPurchases} marks per second`;
+                tooltip.innerHTML = `${upgrade.name.toUpperCase()}<br><br>+${upgrade.value} mps<br><br>${upgrade.numberOfPurchases} ${upgrade.name}'s getting ${upgrade.value * upgrade.numberOfPurchases} marks per second`;
             }
             
             // Get the upgrade element's dimensions and position
@@ -209,16 +207,18 @@ function purchaseUpgrades() {
             //? === PURCHASE UPGRADE ===
             upgrade.div.onclick = function() {
                 if (marks >= upgrade.cost) {
-
-                    marks -= upgrade.cost; // Deduct cost from marks
-
-                    upgrade.numberOfPurchases++; // Increment no. of purchases
+                    
+                    // Deduct cost from marks
+                    marks -= upgrade.cost;
+                    
+                    // Increment no. of purchases
+                    upgrade.numberOfPurchases++; 
 
                     // Increase the cost
                     upgrade.cost = upgrade.originalCost * (1 + 2 * upgrade.numberOfPurchases);
                     upgrade.cost_span.textContent = `Price: ${upgrade.cost}`;
 
-                    //* Reap the benefits
+                    // Reap the benefits
                     if (upgrade.name == 'pencil') {
                         question_value++;
                         elemid('question-value').innerHTML = formatNumber(question_value);
