@@ -1,6 +1,10 @@
+import { elemid, getRandomInt, lerp, formatNumber } from './helper.js'
+
 /*======================================================================================================================
 INSTANCE VARIABLES
 ======================================================================================================================*/
+
+let repeating_request; 
 
 // Marks
 var marks = 0;
@@ -121,7 +125,7 @@ function createUpgrades() {
     // Upgrades loop
     for (let upgrade of upgrades) {
 
-        // Upgrade
+        //? === UPGRADE ===
         upgrade_div = document.createElement("div");
         upgrade_div.classList.add("upgrade"); 
         // Image
@@ -131,7 +135,7 @@ function createUpgrades() {
         // Text
         upgrade_text = document.createElement("div");
         upgrade_text.className = "upgrade-text";
-        capital_name = upgrade.name.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        let capital_name = upgrade.name.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         upgrade_text.innerHTML = `${capital_name}<br><br><br>`;
         // Cost
         upgrade_cost = document.createElement("span");
@@ -186,7 +190,7 @@ function createUpgrades() {
             tooltip.style.display = 'block';
         });
 
-        // Add event listener for tooltip hide
+        //? === MOUSE OUT ===
         upgrade_div.addEventListener('mouseout', () => {
             // Hide the tooltip
             const tooltip = elemid('tooltip');
@@ -196,6 +200,16 @@ function createUpgrades() {
 }
 
 function purchaseUpgrades() {
+    function upgradeAdjust(color, overlay_opacity, upgrade) {
+        if (upgrade.cost_span.style.color != color) {
+                    
+            upgrade.dark_overlay.style.opacity = overlay_opacity;
+    
+            upgrade.cost_span.style.color = color;
+        }
+    }
+
+    // Loop through the upgrades
     for (let upgrade of upgrades) {
 
         //* SUFFICIENT FUNDS
@@ -240,6 +254,7 @@ function purchaseUpgrades() {
                 }
             }
         } 
+
         //! INSUFFICIENT FUNDS
         else if (marks < upgrade.cost) {
             // Change the colour 
@@ -328,6 +343,8 @@ document.addEventListener("keyup", (event) => {
 });
 
 
+
+
 /*======================================================================================================================
 DEBUG MODE
 ======================================================================================================================*/
@@ -342,79 +359,6 @@ document.addEventListener("keydown", (event) => {
 });
 
 
-/*======================================================================================================================
-HELPER FUNCTIONS
-======================================================================================================================*/
-
-// GetElementId Helper
-function elemid(id) { 
-    return document.getElementById(id); 
-}
-
-// Random Range (Integer)
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-
-    // Return a random value between the min and max
-    // Both min and max are inclusive
-}
-
-// Linear Interpolation 
-function lerp(start, stop, magnitude) {
-    return start + magnitude * (stop - start); 
-}
-
-// Change the upgrade's price text colour and overlay opacity
-function upgradeAdjust(color, overlay_opacity, upgrade) {
-    if (upgrade.cost_span.style.color != color) {
-                
-        upgrade.dark_overlay.style.opacity = overlay_opacity;
-
-        upgrade.cost_span.style.color = color;
-    }
-}
-
-// Large number representation
-function formatNumber(number) {
-    if (number < 1_000_000) { return number }; 
-
-    const suffixes = [
-        "",
-        "Thousand",
-        "Million",
-        "Billion",
-        "Trillion",
-        "Quadrillion",
-        "Quintillion",
-        "Sextillion",
-        "Septillion",
-        "Octillion",
-        "Nonillion",
-        "Decillion",
-        "Undecillion",
-        "Duodecillion",
-        "Tredecillion",
-        "Quattuordecillion",
-        "Quindecillion",
-        "Sexdecillion",
-        "Septendecillion",
-        "Octodecillion",
-        "Novemdecillion",
-        "Vigintillion",
-    ];
-
-    const base = 1000;
-    let index = 0;
-
-    while (number >= base) {
-        number /= base;
-        index++;
-    }
-
-    const roundedNumber = Math.round(number * 1000) / 1000; // Round to one decimal place
-
-    return `${roundedNumber} ${suffixes[index]}`;
-}
 
 
 /*======================================================================================================================
