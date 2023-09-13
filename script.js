@@ -12,12 +12,13 @@ var marks_displayed = 0;
 
 // Marks per second
 var mps = 0;
-var mps_counter = 0;
+var counter = 0;
 
 // Question
 var question_value = 1;
 var bottom_value = 1;
 var top_value = 10;
+var seconds = 0; 
 
 // Debugging
 var debug_mode = true
@@ -100,11 +101,29 @@ function gameLoop(timeStamp) {
     }
 
     // * Marks per second
-    mps_counter++;
-    if (mps_counter >= 60) {
+    counter++;
+    if (counter >= 60) {
+        // Increase the marks by the MPS
         marks += mps;
 
-        mps_counter = 0;
+        // Increment the seconds timer
+        seconds++;
+        console.log(seconds);
+
+        // Reset question
+        if (seconds >= 3) { 
+            value1 = getRandomInt(1, 10);
+            value2 = getRandomInt(1, 10); 
+            elemid('value1').innerHTML = value1; 
+            elemid('value2').innerHTML = value2;
+
+
+
+            seconds = 0;
+        }
+
+        // Reset the counter
+        counter = 0;
     }
  
     // * Request again
