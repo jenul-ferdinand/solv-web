@@ -9,10 +9,11 @@ let repeating_request;
 // Marks
 var marks = 0;
 var marks_displayed = 0;
-
-// Marks per second
 var mps = 0;
+
+// Timing
 var counter = 0;
+var time_limit = 10;
 
 // Question
 var question_value = 1;
@@ -21,17 +22,15 @@ var top_value = 10;
 var seconds = 0; 
 
 // Debugging
-var debug_mode = true
+var debug_mode = true;
 var solved = 0;
 var paused = false;
 
 // Upgrades
-var upgrade_container = null;
 var upgrade_div = null;
 var upgrade_image = null;
 var upgrade_text = null;
 var upgrade_cost = null;
-var overlay = null;
 
 const upgrade_purchaseable_color = 'chartreuse';
 const upgrade_non_purchaseable_color = 'red';
@@ -56,8 +55,6 @@ upgrades.forEach(function(upgrade) {
     upgrade.numberOfPurchases = 0;
 });
 
-// Sounds
-const sound_upgrade_purchase = new Audio('audio/correct.mp3');
 
 
 
@@ -108,18 +105,21 @@ function gameLoop(timeStamp) {
 
         // Increment the seconds timer
         seconds++;
-        console.log(seconds);
+        elemid('timer').innerHTML = (time_limit - seconds) + 1;
+        console.log((time_limit - seconds) + 1);
 
         // Reset question
-        if (seconds >= 3) { 
+        if (seconds > time_limit) { 
+
+            // Randomise values
             value1 = getRandomInt(1, 10);
             value2 = getRandomInt(1, 10); 
-            elemid('value1').innerHTML = value1; 
+            elemid('value1').innerHTML = value1;
             elemid('value2').innerHTML = value2;
-
-
-
+            
+            // Reset seconds
             seconds = 0;
+            elemid('timer').innerHTML = "OUT OF TIME!";
         }
 
         // Reset the counter
@@ -313,6 +313,10 @@ document.addEventListener("keydown", (event) => {
 
             // Increment 'solved' count
             solved++;
+
+            // Reset the seconds
+            seconds = 0;
+            elemid("timer").innerHTML = time_limit;
             
             // Debugging
             console.log(`Correct, Marks: ${marks}`);
@@ -369,10 +373,10 @@ DEBUG MODE
 ======================================================================================================================*/
 
 document.addEventListener("keydown", (event) => {
-    if (event.key == '=') {
+    if (event.key == '=' && debug_mode) {
         marks += 100_000;
     } 
-    else if (event.key == '-') {
+    else if (event.key == '-' && debug_mode) {
         marks -= 100_000;
     }
 });
