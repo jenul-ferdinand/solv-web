@@ -7,16 +7,13 @@ INSTANCE VARIABLES
 let repeating_request; 
 
 // Marks
-var marks = 0;
 var marks_displayed = 0;
-var mps = 0;
 
 // Timing
 var counter = 0;
 var time_limit = 10;
 
 // Question
-var question_value = 1;
 var bottom_value = 1;
 var top_value = 10;
 var seconds = 0; 
@@ -35,22 +32,28 @@ var upgrade_cost = null;
 const upgrade_purchaseable_color = 'chartreuse';
 const upgrade_non_purchaseable_color = 'red';
 
-var upgrades = [
-    {name: 'pencil', cost: 2, value: 1},
-    {name: 'mathematician', cost: 3, value: 1},
-    {name: 'trigonometry', cost: 4, value: 4},
-    {name: 'amphetamine', cost: 3000, value: 10},
-    {name: 'artificial_intelligence', cost: 10_000, value: 40}, 
-    {name: 'quantum_computing', cost: 40_000, value: 100},
-    {name: 'space_travel', cost: 200_000, value: 400},
-    {name: 'time_travel', cost: 1_500_000, value: 6666},
-    {name: 'animal_sacrifice', cost: 123_666_444, value: 98_765},
-    {name: 'undead_experiments', cost: 3_999_999_999, value: 999_999},
-    {name: 'nuclear_warfare', cost: 75_000_000_000, value: 10_000_000}
-]
+const game_data = {
+    marks: 0,
+    question_value: 1,
+    mps: 0,
+
+    upgrades : [
+        {name: 'pencil', cost: 2, value: 1},
+        {name: 'mathematician', cost: 3, value: 1},
+        {name: 'trigonometry', cost: 4, value: 4},
+        {name: 'amphetamine', cost: 3000, value: 10},
+        {name: 'artificial_intelligence', cost: 10_000, value: 40}, 
+        {name: 'quantum_computing', cost: 40_000, value: 100},
+        {name: 'space_travel', cost: 200_000, value: 400},
+        {name: 'time_travel', cost: 1_500_000, value: 6666},
+        {name: 'animal_sacrifice', cost: 123_666_444, value: 98_765},
+        {name: 'undead_experiments', cost: 3_999_999_999, value: 999_999},
+        {name: 'nuclear_warfare', cost: 75_000_000_000, value: 10_000_000}
+    ]
+};
 
 // Loop for upgrades to initialise default values
-upgrades.forEach(function(upgrade) {
+game_data.upgrades.forEach(function(upgrade) {
     upgrade.originalCost = upgrade.cost;
     upgrade.numberOfPurchases = 0;
 });
@@ -83,25 +86,24 @@ function gameLoop(timeStamp) {
  
     // * Displayed marks interpolation
     // Check if marks displayed is not equal to the marks
-    if (marks_displayed !== marks) {
+    if (marks_displayed !== game_data.marks) {
 
         // Determine whether to round up or down based on whether marks_displayed is less than marks
-        let roundingFunction = marks_displayed < marks ? Math.ceil : Math.floor;
+        let roundingFunction = marks_displayed < game_data.marks ? Math.ceil : Math.floor;
         
         // Lerp the marks, round as determined, and set the value
-        marks_displayed = roundingFunction(lerp(marks_displayed, marks, 0.3));
+        marks_displayed = roundingFunction(lerp(marks_displayed, game_data.marks, 0.3));
         
         // Update the 'marks' element and log the value
         elemid('marks').innerHTML = formatNumber(marks_displayed);
         console.log(marks_displayed);
-
     }
 
     // * Marks per second
     counter++;
     if (counter >= 60) {
         // Increase the marks by the MPS
-        marks += mps;
+        game_data.marks += game_data.mps;
 
         // Increment the seconds timer
         seconds++;
@@ -142,7 +144,7 @@ function createUpgrades() {
     let upgrade_container = elemid("upgrades");
 
     // Upgrades loop
-    for (let upgrade of upgrades) {
+    for (let upgrade of game_data.upgrades) {
 
         //? === UPGRADE ===
         upgrade_div = document.createElement("div");
@@ -229,23 +231,26 @@ function purchaseUpgrades() {
     }
 
     // Loop through the upgrades
-    for (let upgrade of upgrades) {
+    for (let upgrade of game_data.upgrades) {
 
         //* SUFFICIENT FUNDS
-        if (marks >= upgrade.cost) {
+        if (game_data.marks >= upgrade.cost) {
 
             // Change the colour
             upgradeAdjust(upgrade_purchaseable_color, 0, upgrade);
 
             //? === PURCHASE UPGRADE ===
             upgrade.div.onclick = function() {
-                if (marks >= upgrade.cost) {
+                if (game_data.marks >= upgrade.cost) {
                     
                     // Deduct cost from marks
-                    marks -= upgrade.cost;
+                    game_data.marks -= upgrade.cost;
                     
                     // Increment no. of purchases
                     upgrade.numberOfPurchases++; 
+
+                    // Debugging
+                    console.log(`Purchased Upgrade: ${upgrade.name} for ${upgrade.cost} marks`);
 
                     // Increase the cost
                     upgrade.cost = upgrade.originalCost * (1 + 2 * upgrade.numberOfPurchases);
@@ -253,11 +258,11 @@ function purchaseUpgrades() {
 
                     // Reap the benefits
                     if (upgrade.name == 'pencil') {
-                        question_value++;
-                        elemid('question-value').innerHTML = formatNumber(question_value);
+                        game_data.question_value++;
+                        elemid('question-value').innerHTML = formatNumber(game_data.question_value);
                     } else { 
-                        mps += upgrade.value;
-                        elemid('marks-per-second').innerHTML = formatNumber(mps);
+                        game_data.mps += upgrade.value;
+                        elemid('marks-per-second').innerHTML = formatNumber(game_data.mps);
                     }
                     
                     // Flash bang effect on upgrade div
@@ -268,14 +273,13 @@ function purchaseUpgrades() {
                     // After a delay, remove the flash overlay
                     setTimeout(function() { flash.parentNode.removeChild(flash); }, 250);
 
-                    // Debugging
-                    console.log(`Purchase Upgrade: ${upgrade.name} for ${upgrade.cost} marks`);
+                    
                 }
             }
         } 
 
         //! INSUFFICIENT FUNDS
-        else if (marks < upgrade.cost) {
+        else if (game_data.marks < upgrade.cost) {
             // Change the colour 
             upgradeAdjust(upgrade_non_purchaseable_color, 0.5, upgrade);
         }
@@ -306,7 +310,7 @@ document.addEventListener("keydown", (event) => {
             elemid('value2').innerHTML = value2;
             
             // Add Marks
-            marks += question_value;    
+            game_data.marks += game_data.question_value;    
 
             // Clear the input                                 
             elemid('answer').value = "";    
@@ -319,7 +323,7 @@ document.addEventListener("keydown", (event) => {
             elemid("timer").innerHTML = time_limit;
             
             // Debugging
-            console.log(`Correct, Marks: ${marks}`);
+            console.log(`Correct, Marks: ${game_data.marks}`);
 
             // Confetti
             confetti({
@@ -342,7 +346,7 @@ document.addEventListener("keydown", (event) => {
 
 
 /*======================================================================================================================
-PAUSING GAME
+KEY UP
 ========================================================================================================================*/
 
 document.addEventListener("keyup", (event) => {
@@ -363,6 +367,45 @@ document.addEventListener("keyup", (event) => {
             console.log("Paused");
         }
     }
+
+    if (event.key === 's') {
+        // Save game
+        localStorage.setItem('solvGameData', JSON.stringify(game_data));
+
+        console.log("SAVED GAME");
+    }
+
+    if (event.key === 'l') {
+        // Load game
+        const saved_data = localStorage.getItem('solvGameData');
+        
+        // IF saved data is found, then proceed to apply
+        if (saved_data) {
+            // Parse and store the loaded game data
+            const loaded_game_data = JSON.parse(saved_data);
+
+            // Update the loaded values
+            game_data.marks = loaded_game_data.marks;
+            game_data.question_value = loaded_game_data.question_value;
+            game_data.mps = loaded_game_data.mps;
+            game_data.upgrades = loaded_game_data.upgrades;
+
+            elemid("marks-per-second").innerHTML = game_data.mps;
+            elemid("question-value").innerHTML = game_data.question_value;
+
+            // Clear the old upgrades
+            const upgrades_container = elemid("upgrades"); 
+            while (upgrades_container.firstChild) {
+                upgrades_container.removeChild(upgrades_container.firstChild);
+            }
+
+            // Create new upgrades
+            createUpgrades();
+
+            // Debugging message
+            console.log("LOADED GAME");
+        }
+    }
 });
 
 
@@ -373,11 +416,11 @@ DEBUG MODE
 ======================================================================================================================*/
 
 document.addEventListener("keydown", (event) => {
-    if (event.key == '=' && debug_mode) {
-        marks += 100_000;
+    if (event.key == '=' && debug_mode === true) {
+        game_data.marks += 100_000;
     } 
-    else if (event.key == '-' && debug_mode) {
-        marks -= 100_000;
+    else if (event.key == '-' && debug_mode === true) {
+        game_data.marks -= 100_000;
     }
 });
 
